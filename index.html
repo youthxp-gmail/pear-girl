@@ -1,0 +1,2406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰富集团 · 珍珠女孩抽奖季</title>
+<style>
+  :root{
+    --navy:#2b3a8f; --navy-deep:#1c2668; --gold:#c9a24b; --gold-light:#e9d29a;
+    --gold-deep:#a87e2e; --cream:#faf3e3; --cream-deep:#f3e7c9; --pearl:#ffffff;
+    --red:#b5433a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;user-select:none}
+  html,body{width:100%;height:100%;overflow:hidden}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+    background:
+      radial-gradient(ellipse at 50% -10%, #fffbe9 0%, var(--cream) 45%, var(--cream-deep) 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:38px 40px;   /* 让内容待在画框内边界以内 */
+    cursor:default;
+  }
+  @media (max-height:640px){body{padding:18px 24px}}
+  .serif{font-family:"STKaiti","KaiTi","楷体","STZhongsong","华文中宋",serif}
+
+  /* ====== 顶部标题画框 ====== */
+  .banner{
+    position:relative;padding:2px 0 0;text-align:center;margin-bottom:12px;
+    animation:drop .8s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  @keyframes drop{from{transform:translateY(-60px);opacity:0}to{transform:none;opacity:1}}
+  /* 标题不设矩形外框：自由浮在奶油底上，与下方圆角橱窗区分开 */
+  .banner h1{
+    font-size:52px;letter-spacing:10px;font-weight:500;line-height:1.18;text-indent:10px;
+    background:linear-gradient(180deg,#fff8e3 18%,var(--gold-light) 55%,var(--gold) 92%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  /* 标题高度：原来写死 228px（占 1080 屏 21.7%，比奖品格 186px 还高 26%）。
+     顾客来是为了看清奖品，标题只需"认得出来"即够 —— 改为随视口高度收缩，
+     省下的高度全部让给奖区。品牌感靠字形与金色渐变维持，不靠体量。 */
+  .banner h1 .wordmark{
+    /* 换字标（v62）后必须同步换这两行：旧图 2130×607 里汉字只占 74% 高（下面压着缎带），
+       新图 545×118 里汉字占 83.1%（缎带换成了一根细线）。按 height 同比缩放：
+       旧 134px × 74.2% = 99.4px 字高 → 新 119px × 83.1% = 98.9px，字号视觉不变。
+       下面两个数就是"字高保持 99px"反推出来的，改字标图时记得一起重算。 */
+    display:block;margin:0 auto;height:clamp(85px,11.0vh,119px);width:auto;
+    aspect-ratio:545/118;    /* 与 title-wordmark.png 一致，避免 src 由 JS 设置时跳版 */
+    filter:drop-shadow(0 7px 12px rgba(122,92,22,.16));
+    animation:wmFloat 7s ease-in-out infinite;
+  }
+  @keyframes wmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @media (prefers-reduced-motion:reduce){.banner h1 .wordmark{animation:none}}
+
+  /* ====== 抽奖区：珠宝展柜 ====== */
+  .stage{
+    position:relative;padding:26px 40px 34px;border-radius:20px;
+    /* 一行排开后柜体的自然高度只剩 ~310px，展柜会从"珠宝柜"缩成"一条带子"。
+       min-height 撑住体量、卡片在柜内垂直居中，上下留白就是珠宝柜的陈列位。
+       540px 是宽屏上限（再高就空旷），55vh 是窄/矮屏保护 ——
+       1366×768 下若取 540，标题+展柜+丝带会超出一屏。 */
+    min-height:min(440px,46vh);
+    display:flex;align-items:center;justify-content:center;
+    background:
+      radial-gradient(ellipse 58% 64% at 6% 0%, rgba(255,240,204,.20), transparent 62%),
+      radial-gradient(ellipse at 50% -24%, rgba(112,134,232,.30), transparent 58%),
+      radial-gradient(ellipse at 50% 122%, rgba(201,162,75,.24), transparent 60%),
+      linear-gradient(168deg,#2a3a8e 0%,#1e3a72 46%,#161e58 100%);
+    border:1px solid rgba(233,210,154,.62);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.08),
+      inset 0 22px 44px rgba(0,0,0,.30),
+      inset 0 -18px 34px rgba(0,0,0,.22),
+      0 0 0 7px rgba(255,255,255,.42),
+      0 26px 60px rgba(20,26,70,.34),
+      0 0 60px rgba(201,162,75,.26);
+  }
+  .stage::after{
+    content:"";position:absolute;left:14%;right:14%;bottom:-11px;height:16px;border-radius:50%;
+    background:radial-gradient(ellipse at 50% 50%,rgba(201,162,75,.80),transparent 72%);
+    filter:blur(7px);pointer-events:none;
+  }
+  .stage-inner{
+    position:absolute;inset:10px;border-radius:14px;pointer-events:none;z-index:1;
+    border:1px solid rgba(233,210,154,.28);
+    background:
+      radial-gradient(circle at 0 0, rgba(233,210,154,.95) 0 2.5px, transparent 3.2px),
+      radial-gradient(circle at 100% 0, rgba(233,210,154,.95) 0 2.5px, transparent 3.2px),
+      radial-gradient(circle at 0 100%, rgba(233,210,154,.95) 0 2.5px, transparent 3.2px),
+      radial-gradient(circle at 100% 100%, rgba(233,210,154,.95) 0 2.5px, transparent 3.2px);
+  }
+  .grid{
+    position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:26px;
+    justify-content:center;align-items:center;margin:0 auto;
+  }
+  .box{
+    width:186px;height:186px;border-radius:calc(14px*var(--k,1));position:relative;box-sizing:border-box;
+    background:radial-gradient(ellipse at 50% -10%,#ffffff 0%,#fdf7e8 44%,#f3e8cc 100%);
+    border:1px solid rgba(255,255,255,.90);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      inset 0 -12px 22px rgba(168,126,46,.12),
+      0 12px 24px rgba(6,10,40,.45),
+      0 0 0 2px rgba(201,162,75,.62);
+    display:flex;align-items:center;justify-content:center;
+    /* border-radius 参与过渡：中奖格从圆角方形「化」成正圆(见 .box.win)，
+       没有这一条就是瞬间跳变成圆，失去了「格子胀大成奖章」这个动作。 */
+    transition:transform .18s cubic-bezier(.3,1.25,.4,1),box-shadow .18s,border-radius .22s cubic-bezier(.34,1.06,.5,1);
+  }
+  .box::after{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;
+    background:linear-gradient(178deg,rgba(255,255,255,.80) 0%,rgba(255,255,255,0) 34%);
+    opacity:.5;
+  }
+  /* 卡片顶部原来钉着一颗固定珍珠（.clasp：15px 白球 + 金环）——已删除。
+     它静止、等大、五张卡重复排列，珠群飞过时立刻暴露"那颗是画上去的"；
+     也与结果卡「静态珍珠全部撤掉、珍珠只由动态珠群承担」的既定做法不一致。 */
+  /* 卡片内部尺寸全部乘 --k（= 卡片宽/186，由 buildGrid 按实际尺寸写入）。
+     原来这些值是写死的像素，卡片放大后图标/品名不跟着长，卡面就显得空。
+     基准 186 即历史尺寸，故 --k=1 时与原设计完全一致。 */
+  .box .tier-tag{
+    position:absolute;top:calc(10px*var(--k,1));left:calc(10px*var(--k,1));z-index:3;white-space:nowrap;
+    padding:calc(3px*var(--k,1)) calc(9px*var(--k,1));border-radius:calc(3px*var(--k,1));
+    background:linear-gradient(180deg,#f9ecc0,var(--gold) 58%,var(--gold-deep));
+    color:#3b2c08;font-size:calc(11px*var(--k,1));letter-spacing:calc(2px*var(--k,1));font-weight:700;
+    box-shadow:0 2px 6px rgba(6,10,40,.35),inset 0 1px 0 rgba(255,255,255,.65);
+  }
+  .box .box-content{position:relative;z-index:2;width:100%;text-align:center;padding:calc(22px*var(--k,1)) calc(12px*var(--k,1)) 0}
+  .box .ico{width:calc(58px*var(--k,1));height:calc(58px*var(--k,1));margin:0 auto calc(8px*var(--k,1));filter:drop-shadow(0 2px 3px rgba(120,90,30,.20))}
+  .box .ico svg{width:100%;height:100%;display:block}
+  .box .rule{width:calc(30px*var(--k,1));height:1px;margin:0 auto calc(9px*var(--k,1));background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+  .box .pname{font-size:calc(17px*var(--k,1));font-weight:700;color:var(--navy-deep);letter-spacing:calc(1.5px*var(--k,1));line-height:1.45;text-wrap:balance}
+  .box.gift{background:radial-gradient(ellipse at 50% -10%,#fffdf9 0%,#f8f5eb 46%,#ebe4d2 100%)}
+  .box.gift .ico{opacity:.60;filter:none}
+  .box.gift .pname{color:#8d7f57}
+  .box.small .box-content{padding-top:14px}
+  .box.small .ico{width:42px;height:42px;margin-bottom:5px}
+  .box.small .rule{margin-bottom:6px}
+  .box.small .pname{font-size:13px;letter-spacing:.5px;line-height:1.3}
+  .box.small .tier-tag{font-size:9px;padding:2px 6px;letter-spacing:1px}
+  .box.tiny .box-content{padding-top:6px}
+  .box.tiny .ico{width:28px;height:28px;margin-bottom:3px}
+  .box.tiny .rule,.box.tiny .tier-tag{display:none}
+  .box.tiny .pname{font-size:10px;letter-spacing:0;line-height:1.15}
+  .box.gift .tier-tag{
+    background:linear-gradient(180deg,#f6f3ea,#ddd6c0);color:#8a7c56;
+    box-shadow:0 2px 6px rgba(6,10,40,.22),inset 0 1px 0 rgba(255,255,255,.70);
+  }
+  .box.top{
+    background:radial-gradient(ellipse at 50% -10%,#fffdf4 0%,#fdf4da 44%,#f7e7ba 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      inset 0 -12px 22px rgba(168,126,46,.16),
+      0 12px 24px rgba(6,10,40,.45),
+      0 0 0 2px var(--gold),
+      0 0 20px rgba(201,162,75,.36);
+    animation:glowPulse 2.8s ease-in-out infinite;
+  }
+  .box.top.lit{animation:none}
+  @keyframes glowPulse{
+    0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -12px 22px rgba(168,126,46,.16),0 12px 24px rgba(6,10,40,.45),0 0 0 2px var(--gold),0 0 18px rgba(201,162,75,.32)}
+    50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -12px 22px rgba(168,126,46,.16),0 12px 24px rgba(6,10,40,.45),0 0 0 2px var(--gold),0 0 42px rgba(201,162,75,.78)}
+  }
+  .box.lit{
+    transform:translateY(-6px) scale(1.07);
+    background:radial-gradient(ellipse at 50% -10%,#ffffff 0%,#fff8e2 45%,#ffe9b0 100%);
+    box-shadow:
+      inset 0 1px 0 #fff,
+      inset 0 -12px 22px rgba(168,126,46,.18),
+      0 18px 34px rgba(6,10,40,.50),
+      0 0 0 2px var(--gold),
+      0 0 30px rgba(201,162,75,.95),
+      0 0 70px rgba(233,210,154,.75);
+    z-index:5;
+  }
+  .box.lit .pname{color:var(--navy-deep)}
+  .box.soldout{opacity:.42;filter:grayscale(.6)}
+  .box .sold{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    z-index:6;border-radius:inherit;background:rgba(255,255,255,.35);
+    font-size:calc(16px*var(--k,1));color:var(--red);font-weight:700;letter-spacing:calc(2px*var(--k,1));transform:rotate(-16deg);
+  }
+
+  /* ====== v7 光效：入场逐格点亮 / 金线光带掠过 / 中奖聚光灯 ====== */
+  /* — 入场：逐格点亮 — */
+  .box .halo{
+    position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;z-index:1;opacity:0;
+    box-shadow:0 0 0 1.5px rgba(255,248,224,.85),0 0 26px rgba(233,210,154,.62);
+  }
+  .box.enter{animation:boxIn .70s cubic-bezier(.22,1.06,.32,1) both;animation-delay:calc(var(--i,0) * 85ms)}
+  .box.enter .halo{animation:haloFlash .84s ease-out both;animation-delay:calc(var(--i,0) * 85ms)}
+  @keyframes boxIn{0%{opacity:0;transform:translateY(18px) scale(.94)}62%{opacity:1}100%{opacity:1;transform:none}}
+  @keyframes haloFlash{0%{opacity:0}30%{opacity:.88}100%{opacity:0}}
+
+  /* — 抽奖中：只保留「逐格点亮」这一层 —
+     「金线光带横扫」已删除：它的动作（一道亮光横向掠过展柜）正是珠群在③抽奖幕
+     已经在做的事（一部分珠沿展柜横向冲刺、还带拖尾），两道横向扫光同时跑 → 重复。
+     它还横切过卡片正面，读成一道竖向亮缝。删掉后展柜更干净、深蓝更纯。 */
+  .stage{isolation:isolate}
+  .stage.drawing .box{opacity:.82}
+  .stage.drawing .box.soldout{opacity:.42}
+  .stage.drawing .box.lit{
+    opacity:1;transform:translateY(-5px);z-index:5;
+    background:radial-gradient(ellipse at 50% -10%,#ffffff 0%,#fffaea 46%,#fbecc6 100%);
+    box-shadow:
+      inset 0 1px 0 #fff,
+      inset 0 0 22px rgba(201,162,75,.40),
+      inset 0 -12px 22px rgba(168,126,46,.14),
+      0 16px 30px rgba(6,10,40,.46),
+      0 0 0 1.5px var(--gold),
+      0 0 26px rgba(201,162,75,.72);
+  }
+
+  /* — 中奖：「聚光灯扫过并停在奖品盒上」已删除 —
+     它唯一的职责是宣告"就是这一格"。这件事现在由珠群收束完整承担：珠子在同一时刻
+     从四角聚到中奖格中心、随即在那里绽放。同一拍里还叠着 win 盒自身的金色泛光
+     + 光环闪 + 绽放的全屏过曝，四个"看这里"同时喊反而互相稀释；
+     实测聚光灯只是在中奖格周围加了一层暖雾，把深蓝底洗淡（A/B 对照见 v44 取证）。 */
+  /* — 落点锁定：跑马灯停 → 珠群抵达，这 ~580ms 里格子必须“看起来就是它” —
+     形状刻意留在方形、位置刻意不动：「格子化圆」这一拍要留给珠群落地当信号。
+     原实现是收尾的同一帧就挂 .win（实测 .box.win 出现在收尾后 0ms），
+     而珠群要到 432ms 才开始收束 —— 中间 212ms 是「卡已经圆了、珠子还在乱飞」，因果颠倒。
+     ★ 这里绝不能用 transform 位移/缩放：pImplode 用 getBoundingClientRect 取格心，
+       格子一旦被 transform 挪动，珠群汇聚点与随后的圆卡中心就对不上了。 */
+  .box.land{
+    z-index:5;
+    background:radial-gradient(ellipse at 50% -10%,#ffffff 0%,#fff8e2 45%,#ffe9b0 100%);
+    box-shadow:
+      inset 0 1px 0 #fff,
+      inset 0 -12px 22px rgba(168,126,46,.18),
+      0 18px 34px rgba(6,10,40,.50),
+      0 0 0 2px var(--gold),
+      0 0 26px rgba(201,162,75,.85),
+      0 0 60px rgba(233,210,154,.58);
+  }
+
+  /* — 中奖格：由 317 的圆角方卡「化」成 355 的正圆奖章 —
+     原来中奖格保持方卡、珠在上面绽放，两者同心同时同色：珠 R178 落在
+     「卡半宽 158.5」与「卡对角 214」之间，四边被珠盖住、四角反从珠后露出来，
+     两个形状互相咬；且珠把 tier-tag 与奖名都遮了。现在把形状语言统一到「圆」：
+     格子在 0.22s 内化成正圆（等面积放大 1.128 = √(4/π)，体量不缩水），
+     珠收进圆内，二者成为同心圆，中间露出的那一圈金边卡面就是两者的「连接件」。
+     radius 由 JS 写入精确的 半宽 px（不用 999px：过大的数值会在过渡的前几帧
+     就被 clamp 成圆，看着还是跳变）。 */
+  .box.win{
+    z-index:6;overflow:hidden;border-radius:999px;
+    background:radial-gradient(circle at 50% 34%,#ffffff 0%,#fff8e2 50%,#ffe9b0 100%);
+    box-shadow:
+      inset 0 1px 0 #fff,
+      inset 0 -12px 22px rgba(168,126,46,.18),
+      0 18px 34px rgba(6,10,40,.50),
+      0 0 0 2px var(--gold),
+      0 0 30px rgba(201,162,75,.95),
+      0 0 70px rgba(233,210,154,.75);
+    animation:winPop .48s cubic-bezier(.2,1.15,.3,1) both;   /* v46 .62 → .48：卡先在 ~1060ms 定型，珠体再在内部凝成 */
+  }
+  /* 纯 scale，不带 translateY：位移会让圆卡中心偏离方格中心 7px，
+     而珠群汇聚点与绽放点都是「方格中心」—— 同心关系会被这 7px 破坏。
+     弹性感改由过冲幅度承担（1 → 1.165 → 1.128）。 */
+  @keyframes winPop{
+    0%{transform:scale(1)}
+    55%{transform:scale(1.165)}
+    100%{transform:scale(1.128)}
+  }
+  .box.win .halo{animation:haloFlash 1.05s ease-out both}
+  /* 卡内标签/图标/奖名让位：形状统一成圆之后，方角排版的文字在圆里会挤成一团
+     （tier-tag 钉在左上角、会跑到圆外）。这一拍的任务只是宣告「就是这一格」，
+     奖名由 0.9s 后的结果卡承担，信息不丢。 */
+  .box .box-content,.box .tier-tag{transition:opacity .15s ease-out}
+  .box.win .box-content,.box.win .tier-tag{opacity:0}
+
+  /* — 结果卡：一道柔光扫过 — */
+  .card-sweep{position:absolute;inset:3px;border-radius:calc(30px*min(var(--rc),1.45) - 3px);overflow:hidden;pointer-events:none;z-index:3}
+  .card-sweep::after{
+    content:"";position:absolute;top:0;bottom:0;left:0;width:42%;opacity:0;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.62) 45%,rgba(255,244,208,.35) 62%,transparent);
+    transform:translateX(-130%) skewX(-12deg);
+  }
+  #overlay.show .card-sweep::after{animation:cardSweep 1.1s cubic-bezier(.3,.05,.25,1) .16s both}
+  @keyframes cardSweep{
+    0%{transform:translateX(-130%) skewX(-12deg);opacity:0}
+    14%{opacity:.9}
+    100%{transform:translateX(340%) skewX(-12deg);opacity:0}
+  }
+
+  /* ====== 底部提示 ====== */
+  .hint{
+    margin-top:26px;display:flex;align-items:center;gap:14px;color:#7d6b45;
+    font-size:17px;letter-spacing:4px;animation:breathe 2.2s ease-in-out infinite;
+  }
+  @keyframes breathe{0%,100%{opacity:.55}50%{opacity:1}}
+  kbd{
+    display:inline-block;min-width:62px;text-align:center;padding:7px 16px;border-radius:8px;
+    background:linear-gradient(180deg,#3a4bab,#1c2668);
+    color:var(--gold-light);font-family:inherit;font-size:16px;font-weight:700;letter-spacing:2px;
+    border:1px solid rgba(233,210,154,.50);
+    box-shadow:0 3px 0 rgba(22,30,88,.90),0 8px 16px rgba(43,58,143,.28);
+  }
+
+  /* ====== 绽放聚光：结果层出现前，压暗舞台让珍珠"亮"起来 ====== */
+  /* 结果层要到绽放后 900ms 才出现，所以珍珠的整个生长阶段都压在奶油底色上：
+     奶白珠 + 白色光芒 vs 奶白大理石底 —— 糊成一团，只剩一个轮廓平滑的浅色圆，
+     这正是"像吹出的泡泡糖"被放大的原因。压暗后珍珠立刻成为深色舞台上的一颗发光体。
+     z-index 99：在结果层(100)之下，结果层一出现它就自然被盖住，无需额外收尾。 */
+  #bloomDim{
+    position:fixed;inset:0;z-index:99;pointer-events:none;opacity:0;
+    transition:opacity .20s ease;
+    background:radial-gradient(circle 52vmin at var(--bx,50%) var(--by,50%),
+      rgba(10,14,42,.24) 0%, rgba(10,14,42,.62) 38%, rgba(10,14,42,.78) 100%);
+  }
+  #bloomDim.show{opacity:1}
+
+  /* ====== 结果弹层 ====== */
+  #overlay{
+    position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+    /* 不用 backdrop-filter：本层已近乎不透明、模糊看不出，却逼着上层 canvas 每帧重算整屏模糊 */
+    background:radial-gradient(ellipse at center,rgba(35,46,120,.955) 0%,rgba(16,22,64,.985) 100%);
+  }
+  #overlay.show{display:flex;animation:fadeIn .25s both}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .result-card{
+    /* --rc：结果卡尺度系数，由 showResult 按奖项名次写入（1 = 四等奖 / 普惠礼基准）。
+       卡面大小本身就是层级信号 —— 一等奖的卡明显更大，抽到大奖一眼就能看出来。
+       内边距与全部字号统一乘 --rc，否则只有名字变大、留白没跟上，卡会显得空。 */
+    --rc:1;
+    position:relative;text-align:center;
+    padding:calc(60px*var(--rc)) calc(110px*var(--rc)) calc(48px*var(--rc));
+    border-radius:calc(30px*min(var(--rc),1.45));
+    background:linear-gradient(165deg,#fffdf4 0%,#f9efd2 100%);
+    border:3px solid var(--gold);
+    box-shadow:0 0 0 5px rgba(233,210,154,.5),0 0 90px rgba(233,210,154,.55),0 30px 80px rgba(0,0,0,.5);
+    animation:pop .55s cubic-bezier(.22,1.12,.3,1) both;
+  }
+  @keyframes pop{from{transform:scale(.5);opacity:0}to{transform:none;opacity:1}}
+  /* — 结果卡顶部：金色细线 + 菱形（取代原来三颗静态珍珠，珍珠交给动态珠群） — */
+  .result-card .rule-orn{position:absolute;top:-9px;left:50%;transform:translateX(-50%);display:flex;align-items:center;z-index:2}
+  .result-card .rule-orn::before,.result-card .rule-orn::after{content:"";display:block;width:104px;height:1px}
+  .result-card .rule-orn::before{background:linear-gradient(90deg,transparent,#c9a24b)}
+  .result-card .rule-orn::after{background:linear-gradient(270deg,transparent,#c9a24b)}
+  .result-card .rule-orn span{
+    width:14px;height:14px;margin:0 13px;transform:rotate(45deg);
+    background:linear-gradient(135deg,#f8e7b2,#c9a24b 56%,#a87e2e);
+    box-shadow:0 0 0 1.5px rgba(255,255,255,.62),0 2px 7px rgba(6,10,40,.34);
+  }
+  /* — 金色光晕：奖品出现时自圆心漫出（"啪"之后的光） — */
+  .card-halo{
+    position:absolute;left:50%;top:50%;width:146%;height:0;padding-bottom:146%;
+    transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;z-index:0;opacity:0;
+    background:radial-gradient(circle,rgba(255,247,220,.95) 0%,rgba(233,210,154,.52) 24%,rgba(201,162,75,.18) 46%,transparent 68%);
+  }
+  #overlay.show .card-halo{animation:haloBloom 1.6s cubic-bezier(.16,.92,.28,1) .06s both}
+  @keyframes haloBloom{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.22)}
+    36%{opacity:.92}
+    100%{opacity:.26;transform:translate(-50%,-50%) scale(1)}
+  }
+  .result-label,#resultName,#resultTier,.result-tip{position:relative;z-index:2}
+  .result-label{font-size:calc(26px*var(--rc));color:#8a743a;letter-spacing:calc(8px*var(--rc));margin-bottom:calc(14px*var(--rc))}
+  #resultName{
+    font-size:calc(62px*var(--rc));font-weight:500;letter-spacing:calc(6px*var(--rc));line-height:1.25;
+    background:linear-gradient(180deg,#3a4db3 0%,var(--navy-deep) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  #resultName.jackpot{
+    background:linear-gradient(180deg,#e8c76a 0%,var(--gold) 45%,var(--gold-deep) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 3px 3px rgba(120,80,0,.35));
+  }
+  #resultTier{margin-top:calc(10px*var(--rc));font-size:calc(24px*var(--rc));letter-spacing:calc(6px*var(--rc));color:var(--gold-deep)}
+  .result-tip{margin-top:calc(30px*var(--rc));font-size:calc(16px*var(--rc));color:#9a8a5c;letter-spacing:calc(4px*var(--rc));animation:breathe 1.8s infinite}
+
+  /* ====== 珍珠特效层：动态珠群（待机漂浮→汇聚→高速→收束→绽放） ====== */
+  #fx{position:fixed;inset:0;z-index:112;pointer-events:none}
+
+  /* ====== 珍珠女孩人像 ====== */
+  .mascot{
+    position:fixed;left:22px;bottom:8px;z-index:110;width:236px;pointer-events:none;
+    animation:floaty 3.4s ease-in-out infinite;
+    filter:drop-shadow(0 12px 18px rgba(43,58,143,.26));
+  }
+  .mbody img{width:100%;display:block}
+  .bubble{
+    position:absolute;bottom:calc(100% - 26px);left:58%;transform:translateX(-50%);
+    padding:9px 16px;white-space:nowrap;
+    border-radius:16px;
+    background:linear-gradient(160deg,#fffdf4,#f6ecd2);
+    border:2px solid var(--gold);color:#7a6430;
+    font-size:15px;font-weight:700;letter-spacing:1px;
+    box-shadow:0 6px 14px rgba(120,90,30,.25);
+    opacity:0;transition:opacity .35s;pointer-events:none;
+  }
+  .bubble.show{opacity:1}
+  .bubble::after{
+    content:"";position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);
+    border:9px solid transparent;border-top-color:var(--gold);border-bottom:0;
+  }
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .mascot.watch{animation-duration:1.1s}
+  .mascot.watch .bubble{animation-duration:1.1s}
+  .mascot.cheer{animation:cheer .55s ease-in-out 3}
+  @keyframes cheer{
+    0%,100%{transform:translateY(0) rotate(0deg)}
+    30%{transform:translateY(-26px) rotate(-7deg)}
+    65%{transform:translateY(2px) rotate(5deg)}
+  }
+  /* — 按奖品层级的动作分级：幅度与节奏跟着奖项走 —
+     幅度就是"高兴程度"的可读信号：一等奖整个人蹦起来、二等奖挥着半跳、
+     三等奖轻轻左右摇、四等奖与普惠礼只是点头致意。
+     全部只动 transform，不动布局，也不引入新的合成层。 */
+  .mascot.m1{animation:cheerBig .62s cubic-bezier(.3,1.3,.4,1) 4}
+  @keyframes cheerBig{
+    0%,100%{transform:translateY(0) rotate(0deg)}
+    22%{transform:translateY(-36px) rotate(-6deg)}
+    46%{transform:translateY(-2px) rotate(1deg)}
+    72%{transform:translateY(-20px) rotate(5deg)}
+  }
+  .mascot.m2{animation:cheer .60s ease-in-out 3}
+  .mascot.m3{animation:sway .80s ease-in-out 2}
+  @keyframes sway{
+    0%,100%{transform:translateY(0) rotate(0deg)}
+    50%{transform:translateY(-9px) rotate(3.5deg)}
+  }
+  .mascot.m4{animation:nod .90s ease-in-out 2}
+  @keyframes nod{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-5px)}
+  }
+  @media (max-width:1150px){.mascot{display:none}}
+
+  /* ====== 品牌署名 NOWM-V10d：泰富集团 logo（右上抬头） ====== */
+  .brand-logo{
+    position:fixed;top:92px;right:96px;z-index:95;height:40px;width:auto;
+    opacity:.94;pointer-events:none;user-select:none;
+    filter:drop-shadow(0 2px 5px rgba(43,58,143,.14));
+  }
+  @media (max-height:830px){
+    .brand-logo{top:78px;right:88px;height:34px}
+  }
+
+  /* ====== 齿轮 & 管理面板 ====== */
+  #gear{
+    position:fixed;right:18px;bottom:18px;z-index:120;width:48px;height:48px;border:none;border-radius:50%;
+    background:rgba(43,58,143,.14);color:#8a7a4a;font-size:22px;cursor:pointer;opacity:.65;
+    transition:.2s;
+  }
+  #gear:hover{opacity:1;background:var(--navy);color:#fff}
+  #adminMask{
+    position:fixed;inset:0;z-index:200;background:rgba(20,26,70,.55);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;
+  }
+  #adminMask.show{display:flex}
+  .admin{
+    width:min(1080px,96vw);max-height:88vh;display:flex;flex-direction:column;
+    background:#fffdf6;border-radius:18px;border:2px solid var(--gold);
+    box-shadow:0 24px 70px rgba(0,0,0,.45);overflow:hidden;
+  }
+  .admin header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;background:linear-gradient(90deg,var(--navy),var(--navy-deep));
+    color:var(--gold-light);letter-spacing:4px;font-size:18px;font-weight:700;
+  }
+  .admin header button{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;opacity:.8}
+  .admin .body{padding:16px 22px;overflow:auto;font-size:14px}
+  table.plist{width:100%;border-collapse:collapse}
+  table.plist th,table.plist td{padding:7px 6px;border-bottom:1px solid #eee3c4;text-align:center}
+  table.plist th{background:#f6eed6;color:#7a6430;font-weight:700;position:sticky;top:0}
+  table.plist input[type=text]{width:132px;padding:4px 8px;border:1px solid #d8c99a;border-radius:6px}
+  table.plist input[type=number]{width:70px;padding:4px 8px;border:1px solid #d8c99a;border-radius:6px}
+  table.plist input[type=text].tier{width:88px;color:#5a4a1e;font-weight:700}
+  table.plist select{padding:4px 6px;border:1px solid #d8c99a;border-radius:6px;background:#fff;color:#5a4a1e;font-size:13px;cursor:pointer}
+  table.plist td.icocell{white-space:nowrap}
+  .ico-prev{display:inline-block;width:20px;height:20px;vertical-align:-5px;margin-right:4px}
+  .ico-prev svg{width:100%;height:100%;display:block}
+  .rate{color:var(--navy);font-weight:700}
+  .del{color:var(--red);border:1px solid #e5c1bd;background:#fdf3f2;border-radius:6px;padding:3px 10px;cursor:pointer}
+  .addrow{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .btn{
+    padding:8px 18px;border-radius:8px;border:1px solid var(--gold);cursor:pointer;
+    background:linear-gradient(180deg,#fff8e3,#f3e5bb);color:#7a6430;font-weight:700;
+  }
+  .btn.primary{background:linear-gradient(180deg,var(--navy),var(--navy-deep));color:var(--gold-light);border-color:var(--navy-deep)}
+  .btn.danger{background:#fdf3f2;border-color:#e5c1bd;color:var(--red)}
+  .admin .foot{
+    padding:12px 22px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;
+    border-top:1px solid #eee3c4;background:#fbf5e4;font-size:13px;color:#8a7a4a;
+  }
+  .admin .foot .grp{display:flex;gap:10px;flex-wrap:wrap}
+  #poolStat{margin-top:12px;background:linear-gradient(180deg,#fdf7e2,#f7edd0);border:1px solid #e8d9a8;border-radius:8px;padding:10px 14px;font-size:13px;color:#6a5c36;line-height:1.7}
+  #poolStat b{color:#8a6a18}
+  #logBox{margin-top:14px;max-height:120px;overflow:auto;background:#fbf7ea;border:1px solid #eee3c4;border-radius:8px;padding:8px 12px;font-size:12px;color:#6a5c36;line-height:1.8}
+  .stat{margin-left:auto}
+  .passbox{padding:40px 50px;text-align:center}
+  .passbox input{font-size:22px;padding:10px 16px;width:220px;text-align:center;border:2px solid var(--gold);border-radius:10px;letter-spacing:8px}
+  .passbox .err{color:var(--red);height:22px;margin-top:10px}
+  .toast{
+    position:fixed;left:50%;bottom:60px;transform:translateX(-50%);z-index:300;
+    background:var(--navy-deep);color:#fff;padding:10px 26px;border-radius:24px;font-size:15px;
+    letter-spacing:2px;box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;transition:.3s;pointer-events:none;
+  }
+  .toast.show{opacity:1}
+
+  /* ====== 背景装饰层 v8e：装裱画框 + 珠饰四角 + 珍珠网纹 + 珍珠光晕 ====== */
+  .bg-deco{
+    position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
+    background-image:
+      url("brush.png"), url("canvas-lite.png"), url("canvas-dark.png"),
+      radial-gradient(ellipse 60% 72% at 13% 6%, rgba(255,246,220,.60), rgba(255,246,220,0) 64%),
+      radial-gradient(ellipse 74% 84% at 97% 98%, rgba(30,42,114,.115), rgba(30,42,114,0) 66%),
+      radial-gradient(ellipse 118% 88% at 50% 44%, rgba(255,255,255,0) 40%, rgba(38,50,124,.05) 76%, rgba(30,42,114,.10) 100%),
+      radial-gradient(ellipse 76% 42% at 50% 104%, rgba(201,162,75,.14), rgba(201,162,75,0) 72%),
+      radial-gradient(ellipse 76% 38% at 50% -4%, rgba(201,162,75,.12), rgba(201,162,75,0) 72%);
+    background-repeat:repeat,repeat,repeat,no-repeat,no-repeat,no-repeat,no-repeat,no-repeat;
+    background-size:512px 512px,512px 512px,512px 512px,auto,auto,auto,auto,auto;
+  }
+  .defs-only{position:absolute;width:0;height:0;overflow:hidden}
+  .bg-deco::after{
+    content:"";position:absolute;inset:24px;border-radius:4px;
+    border:1px solid rgba(201,162,75,.26);
+    box-shadow:inset 0 0 0 5px rgba(255,255,255,.28);
+  }
+  .bg-corner{position:absolute;width:126px;height:126px;opacity:.95}
+  .bg-corner.tl{top:24px;left:24px}
+  .bg-corner.tr{top:24px;right:24px;transform:scaleX(-1)}
+  .bg-corner.bl{bottom:24px;left:24px;transform:scaleY(-1)}
+  .bg-corner.br{bottom:24px;right:24px;transform:scale(-1)}
+  .bg-deco .orb{
+    position:absolute;border-radius:50%;filter:blur(3px);
+    background:radial-gradient(circle at 33% 28%,#ffffff 0%,#fefbf3 38%,#f6efdb 70%,rgba(201,162,75,.34) 100%);
+    box-shadow:
+      inset 0 -10px 22px rgba(160,140,100,.16),
+      0 0 46px 14px rgba(255,252,240,.60),
+      0 16px 34px rgba(120,90,30,.09);
+    animation:orbDrift 20s ease-in-out infinite;
+  }
+  @keyframes orbDrift{
+    0%,100%{transform:translate3d(0,0,0) scale(1)}
+    50%{transform:translate3d(12px,-28px,0) scale(1.06)}
+  }
+  .bg-foot{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);width:220px;height:34px;opacity:.9}
+  @media (max-height:860px){.bg-foot{display:none}}
+
+  /* ====== 华丽版皮肤 v50：深蓝丝绒 + 金框 + 宝石 ======
+     全部挂在 body[data-skin="luxe"] 下。换底之后"在米白上够用"的细线一律不够看，
+     所以这里的统一手法是把线加粗、改双线、加金边；颜色只是顺带调的。 */
+  /* v55：.luxe-crown / .luxe-bow / .luxe-corner 三个装饰节点已全部移除
+     （标题改用自带装饰的珍珠花环字标），原本这条"默认隐藏"规则随之作废。 */
+
+  /* —— 页面底：米白大理石（v54 纠正）
+     第一版把整页刷成深蓝，是对"华丽"的过度演绎。效果图里华丽感全部来自
+     画框、宝石与丝绒展柜 —— 页面底其实仍是米白，深蓝只属于展柜与丝带。
+     底一变深，大理石纹理、背景浮珠、右上 logo 的底色、以及"已抽完"卡片的
+     灰调（.soldout 是 42% 不透明度）全部失去参照，观感反而掉档。 —— */
+  body[data-skin="luxe"]{
+    background:
+      radial-gradient(ellipse 76% 54% at 50% 0%, rgba(255,255,255,.80), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 12% 96%, rgba(240,232,214,.70), transparent 72%),
+      linear-gradient(180deg,#fefcf7 0%,#faf5ea 48%,#f4ecda 100%);
+  }
+  /* 纹理不换图：同一张米白 canvas 纹理压低不透明度，就是效果图那种更细更白的石纹底 */
+  body[data-skin="luxe"] .bg-deco{opacity:.26;mix-blend-mode:multiply}
+  /* 页面外框：效果图仍是一圈细金线（与简约版同族，只略清楚一点）。
+     第一版加粗成 2px 金带是误判 —— 粗金框属于展柜，不属于页面。 */
+  body[data-skin="luxe"] .bg-deco::after{
+    inset:22px;border-radius:4px;
+    border:1px solid rgba(201,162,75,.40);
+    box-shadow:inset 0 0 0 4px rgba(255,255,255,.62),inset 0 0 0 5px rgba(201,162,75,.16);
+  }
+  /* —— 页面四角：细金卷草（复用 .bg-corner 的 SVG），只放大不换素材 —— */
+  body[data-skin="luxe"] .bg-corner{width:152px;height:152px;opacity:1}
+  body[data-skin="luxe"] .bg-corner.tl{top:22px;left:22px}
+  body[data-skin="luxe"] .bg-corner.tr{top:22px;right:22px}
+  body[data-skin="luxe"] .bg-corner.bl{bottom:22px;left:22px}
+  body[data-skin="luxe"] .bg-corner.br{bottom:22px;right:22px}
+
+  /* —— 标题（v55）：换成「珍珠花环」字标
+     上一版是"皇冠 + 双蝴蝶结 + 细金双线框"叠在一个裸字标上，用户反馈跟参考稿差得远。
+     根因不是细节不够，而是**装饰重复**：参考稿的标题块本身就是一个自带装饰的完整
+     设计（金字 + 金线卷草 + 珍珠 + 白蕾丝辫 + 细蓝带，装饰长在字标里）。我们额外又
+     叠了框、皇冠、蝴蝶结 —— 三套装饰互相打架，于是越描越远。
+
+     所以这一版的逻辑是"减法"：把装饰还回字标里，页面上只留一张图。
+     ① 不套 .banner 的框 —— 框会与字标自带的细金线重复；
+     ② 去掉 drop-shadow —— 参考稿里阴影已烘焙在图内，再叠一层会发脏；
+     ③ 皇冠与蝴蝶结的 DOM 节点一并删掉（crown.png 因此不再被引用，
+        单文件版少内联一张 222KB 的素材）。 */
+  body[data-skin="luxe"] .banner{
+    padding:0;border-radius:0;background:none;border:0;box-shadow:none;
+  }
+  /* 字号按"字高"反推，不能直接照搬尺寸：
+     参考稿 aspect=5.96（原字标 3.51），且中文只占全高约 46%。
+     要与简约版相当的 ~88px 字高 → 全高 ≈ 190px，宽度 ≈ 1130px。 */
+  body[data-skin="luxe"] .banner h1 .wordmark{
+    height:clamp(124px,17vh,190px);
+    aspect-ratio:1620/272;   /* 与 title-garland.png 一致 */
+    filter:none;
+  }
+  /* 底色补偿：页面顶部是近白（径向渐变 #fffbe9 起步，实测标题下为 252,250,242），
+     而参考稿标题铺在暖米 (241,231,215) 上。字标里的白蕾丝与珍珠本身就接近白，
+     底色一亮就跟底融在一起 —— 这就是"明明抠图很干净、上屏却发淡"的原因。
+     这里垫一层无边缘的暖米柔光，把参考稿的底色还回来（不是画框：用户明确否掉了框，
+     所以用大半径径向渐变 + 70% 处归零，看不出形状）。 */
+  body[data-skin="luxe"] .banner::before{
+    content:"";position:absolute;left:50%;top:52%;
+    transform:translate(-50%,-50%);pointer-events:none;z-index:0;
+    width:150%;height:250%;
+    background:radial-gradient(ellipse 50% 50% at 50% 50%,
+      rgba(245,234,210,.96) 0%, rgba(245,234,210,.74) 42%, rgba(245,234,210,0) 74%);
+  }
+  body[data-skin="luxe"] .banner h1{position:relative;z-index:1}
+
+  /* —— 展柜：四层金框（亮金细线 → 12px 粗金带 → 深蓝缝 → 内细金线）
+     第一版只有 2px 单线。在米白底上细线"够用"，但效果图里展柜是整页最重的一笔，
+     边框厚度差一倍，整体就散架。四层靠 box-shadow 逐层内缩堆出来，不新增素材。 —— */
+  body[data-skin="luxe"] .stage{
+    padding:38px 54px 46px;border-radius:16px;
+    background:
+      radial-gradient(ellipse 44% 38% at 50% 24%, rgba(132,162,255,.42), transparent 72%),
+      radial-gradient(ellipse 74% 62% at 50% 56%, rgba(36,62,168,.46), transparent 78%),
+      radial-gradient(ellipse 54% 70% at 6% 2%, rgba(255,240,204,.16), transparent 64%),
+      radial-gradient(ellipse 58% 38% at 50% 106%, rgba(201,162,75,.18), transparent 66%),
+      linear-gradient(170deg,#25409e 0%,#1a2d78 38%,#101a54 74%,#080e38 100%);
+    border:3px solid rgba(244,226,174,.95);
+    box-shadow:
+      inset 0 0 0 2px rgba(110,84,26,.55),
+      inset 0 0 0 14px #c9a24b,
+      inset 0 0 0 17px #16234f,
+      inset 0 0 0 18px rgba(233,210,154,.72),
+      inset 0 54px 92px rgba(0,0,0,.40),
+      inset 0 -40px 68px rgba(0,0,0,.28),
+      0 0 0 4px rgba(201,162,75,.92),
+      0 0 0 5px rgba(255,244,208,.60),
+      0 30px 70px rgba(60,48,20,.38),
+      0 0 90px rgba(201,162,75,.26);
+  }
+  /* 展柜里衬的上下一道细金槽（丝绒柜的"压条"） */
+  body[data-skin="luxe"] .stage-inner{
+    inset:24px;border-radius:10px;border-color:rgba(233,210,154,.40);
+    box-shadow:inset 0 20px 0 -19px rgba(233,210,154,.48),inset 0 -20px 0 -19px rgba(233,210,154,.48);
+  }
+  body[data-skin="luxe"] .stage::after{
+    background:radial-gradient(ellipse at 50% 50%,rgba(233,210,154,.80),transparent 72%);
+  }
+  /* —— 展柜左右中点：一对菱形蓝宝石（效果图用它们"收紧"长边） —— */
+  body[data-skin="luxe"] .stage-inner::before,
+  body[data-skin="luxe"] .stage-inner::after{
+    content:"";position:absolute;top:50%;width:28px;height:28px;z-index:4;
+    transform:translate(-50%,-50%) rotate(45deg);border-radius:6px;
+    background:linear-gradient(135deg,#b6e8ff 0%,#3f86ea 40%,#153aa6 72%,#0a1f66 100%);
+    border:2px solid rgba(240,222,168,.95);
+    box-shadow:0 0 16px rgba(120,180,255,.80),inset 0 3px 6px rgba(255,255,255,.70);
+  }
+  /* v66：两颗菱形都要"骑"在框线上。旧版共享 translate(-50%,-50%)，
+     它只对左锚点成立；右锚点被同向位移推进栏内 14px → 左右一外一内、不对称。
+     现在锚点钉在框线上（left:0 / right:0），右侧 transform 改为 +50% 同向镜像。 */
+  body[data-skin="luxe"] .stage-inner::before{left:0}
+  body[data-skin="luxe"] .stage-inner::after{left:auto;right:0;transform:translate(50%,-50%) rotate(45deg)}
+  /* —— 珍珠链：已按用户要求整体撤除（v58）。
+     原来是 JS 现算的一串纯色圆点，落在一条 sin 弧线上、被上下两排卡片从中间截断，
+     看着像"珠子从卡片底下钻过去托着格子"——深蓝丝绒上没有任何环境支撑，
+     就是一排白圆点，属于"再怎么调半径/间距也救不回来"的那类装饰。 —— */
+
+  /* —— 卡片：丝绒底上把象牙调暖、金边加亮（浅卡贴深底本来就跳，描边负责"镶进框里"）—— */
+  body[data-skin="luxe"] .box{
+    background:radial-gradient(ellipse at 50% -12%,#fffef9 0%,#fdf5e0 42%,#f0e1b8 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,1),
+      inset 0 0 0 1px rgba(201,162,75,.62),
+      inset 0 -14px 26px rgba(168,126,46,.20),
+      0 14px 28px rgba(0,0,0,.55),
+      0 0 0 2px rgba(214,178,96,.95),
+      0 0 0 3px rgba(90,68,24,.46);
+  }
+  /* 已抽完的卡（.soldout = 42% 不透明度 + 60% 去色）：米白底上这叫"淡"，
+     丝绒底上同一组数值就成块发灰的脏斑，所以这两条要单独抬一档。 */
+  body[data-skin="luxe"] .box.soldout{opacity:.62;filter:grayscale(.42)}
+
+  /* —— 底部丝带：深蓝缎带 + 两端燕尾 + 两颗小金蝴蝶结 —— */
+  body[data-skin="luxe"] .hint{
+    position:relative;margin-top:22px;padding:13px 58px;border-radius:10px;color:var(--gold-light);
+    background:linear-gradient(180deg,#31469c 0%,#1d2d84 46%,#0f1a56 100%);
+    border:1px solid rgba(201,162,75,.88);
+    box-shadow:
+      inset 0 1px 0 rgba(255,238,190,.32),
+      inset 0 0 0 4px rgba(233,210,154,.14),
+      inset 0 -10px 20px rgba(0,0,0,.40),
+      0 10px 24px rgba(0,0,0,.28);
+  }
+  /* 燕尾：两端向外各收一个尖角（border 三角形，不占布局） */
+  body[data-skin="luxe"] .hint::before,
+  body[data-skin="luxe"] .hint::after{
+    content:"";position:absolute;top:50%;transform:translateY(-50%);
+    width:0;height:0;border-top:21px solid transparent;border-bottom:21px solid transparent;
+  }
+  body[data-skin="luxe"] .hint::before{left:-29px;border-right:29px solid #16234f}
+  body[data-skin="luxe"] .hint::after{right:-29px;border-left:29px solid #16234f}
+  body[data-skin="luxe"] kbd{
+    background:linear-gradient(180deg,#465cc4,#22307f);
+    border-color:rgba(233,210,154,.70);
+    box-shadow:0 3px 0 rgba(10,16,50,.90),0 8px 16px rgba(0,0,0,.26);
+  }
+  /* 丝带两端的小金蝴蝶结 */
+  .luxe-tbow{display:none}
+  body[data-skin="luxe"] .luxe-tbow{
+    display:block;position:absolute;top:50%;width:54px;height:auto;z-index:2;
+    transform:translateY(-50%);filter:drop-shadow(0 3px 7px rgba(40,30,10,.42));
+  }
+  body[data-skin="luxe"] .luxe-tbow.l{left:-32px}
+  body[data-skin="luxe"] .luxe-tbow.r{right:-32px;transform:translateY(-50%) scaleX(-1)}
+
+  /* —— 结果层：页面底已回到米白，压暗量与简约版一致，不再单独覆盖 —— */
+  /* —— 展柜四角宝石：150px 压在金框转角上
+     第一版 112px，缩到 1920 页面上宝石只剩一粒芝麻，效果图里它是角的"主角"。 —— */
+  .luxe-sgem{display:none}
+  body[data-skin="luxe"] .luxe-sgem{
+    /* 高度跟随展柜：单行布局后展柜从 719px 收到 ~310px，写死的 190px 会吃掉大半个柜角。
+       30% 正好还原原来 190/719≈26% 的占比，宽高比仍由图片自身决定。 */
+    display:block;position:absolute;width:auto;height:min(190px,30%);z-index:4;pointer-events:none;
+    filter:drop-shadow(0 4px 12px rgba(10,14,44,.62));
+  }
+  body[data-skin="luxe"] .luxe-sgem.bl{left:-16px;bottom:-16px}
+  body[data-skin="luxe"] .luxe-sgem.br{right:-16px;bottom:-16px;transform:scaleX(-1)}
+  body[data-skin="luxe"] .luxe-sgem.tl{left:-16px;top:-16px;transform:scaleY(-1)}
+  body[data-skin="luxe"] .luxe-sgem.tr{right:-16px;top:-16px;transform:scale(-1)}
+
+
+  /* ====== 油画版皮肤 v67：古典暖调油画框 + 麻布画布 ======
+     整页是一幅"钉在墙上的古典油画"。页面底深赭暗部 + 中央暖光（伦勃朗式明暗），
+     画布纹理（canvas-lite/dark/brush）在暗底上压出更明显的布纹；正中一具厚重鎏金画框
+     包住抽奖区（展柜即画芯），四角与左右中点是暖金/琥珀宝石卡扣。
+     珍珠在暗底上反而更"亮"——这正是油画的戏剧光：暗背景把浅色珍珠托成发光体。
+     复用既有资源：canvas/brush 纹理、title-wordmark 金字标、bg-corner 金卷草（暖化成古铜）。
+     不新增任何图片资源，纯 CSS 叠层 + 复用油画纹理。 */
+
+  /* —— 页面底：深赭暗部 + 中央暖光（肖像画背景暗角）—— */
+  body[data-skin="oil"]{
+    background:
+      radial-gradient(ellipse 64% 52% at 50% 26%, rgba(214,170,108,.34), rgba(214,170,108,0) 68%),
+      radial-gradient(ellipse 120% 96% at 50% 118%, rgba(56,34,16,.62), rgba(56,34,16,0) 70%),
+      linear-gradient(166deg,#5b4226 0%,#3e2c18 44%,#271a0d 100%);
+  }
+  /* 画布纹理在暗底上更"实"：暖棕叠色 + 暗角，读成油画布 */
+  body[data-skin="oil"] .bg-deco{
+    opacity:1;mix-blend-mode:normal;
+    filter:saturate(1.15) brightness(.92);
+  }
+  body[data-skin="oil"] .bg-deco::after{
+    inset:22px;border-radius:4px;
+    border:2px solid rgba(201,150,70,.55);
+    box-shadow:
+      inset 0 0 0 4px rgba(255,240,210,.30),
+      inset 0 0 0 6px rgba(120,80,30,.55),
+      inset 0 0 60px rgba(20,12,5,.55);
+  }
+  /* 四角金卷草暖化成古铜 */
+  body[data-skin="oil"] .bg-corner{width:140px;height:140px;opacity:1;filter:sepia(.45) saturate(1.35) brightness(.94)}
+  body[data-skin="oil"] .bg-corner.tl{top:22px;left:22px}
+  body[data-skin="oil"] .bg-corner.tr{top:22px;right:22px}
+  body[data-skin="oil"] .bg-corner.bl{bottom:22px;left:22px}
+  body[data-skin="oil"] .bg-corner.br{bottom:22px;right:22px}
+
+  /* —— 标题：金字标浮在暗底，垫一层暖光让它"亮"出来（参考华丽版补光思路）—— */
+  body[data-skin="oil"] .banner h1 .wordmark{
+    /* v69 新字标：1758x390，页面显示 586x130；主字高固定 99px（与旧版一致） */
+    height:clamp(96px,13.6vh,135px);
+    aspect-ratio:1842/405;
+    filter:drop-shadow(0 6px 14px rgba(0,0,0,.5));
+  }
+  body[data-skin="oil"] .banner::before{
+    content:"";position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);pointer-events:none;z-index:0;
+    width:120%;height:200%;
+    background:radial-gradient(ellipse 50% 50% at 50% 50%,
+      rgba(120,82,32,.55) 0%, rgba(120,82,32,.32) 40%, rgba(120,82,32,0) 72%);
+  }
+  body[data-skin="oil"] .banner h1{position:relative;z-index:1}
+
+  /* —— 画框：四层鎏金（亮金线 → 粗金带 → 暗褐缝 → 内金线），包住暗色画芯 —— */
+  body[data-skin="oil"] .stage{
+    padding:36px 52px 44px;border-radius:14px;
+    background:
+      radial-gradient(ellipse 56% 46% at 50% 26%, rgba(150,104,52,.34), transparent 72%),
+      radial-gradient(ellipse 80% 70% at 50% 64%, rgba(34,22,10,.55), transparent 78%),
+      linear-gradient(158deg,#241808 0%,#33230f 46%,#180f04 100%);
+    border:3px solid #caa24c;
+    box-shadow:
+      inset 0 0 0 3px #6e541a,
+      inset 0 0 0 14px #c9a24b,
+      inset 0 0 0 17px #3a2a14,
+      inset 0 0 0 19px #e9d29a,
+      inset 0 52px 92px rgba(0,0,0,.58),
+      inset 0 -38px 66px rgba(0,0,0,.46),
+      0 0 0 4px #8a6a2e,
+      0 0 0 6px #e9d29a,
+      0 28px 70px rgba(0,0,0,.55),
+      0 0 80px rgba(190,140,70,.30);
+  }
+  body[data-skin="oil"] .stage-inner{
+    inset:22px;border-radius:10px;border-color:rgba(233,210,154,.34);
+    box-shadow:
+      inset 0 18px 0 -17px rgba(233,210,154,.42),
+      inset 0 -18px 0 -17px rgba(233,210,154,.42),
+      inset 0 0 70px rgba(0,0,0,.40);
+  }
+  body[data-skin="oil"] .stage::after{
+    background:radial-gradient(ellipse at 50% 50%,rgba(201,162,75,.80),transparent 72%);
+  }
+  /* 左右中点：琥珀宝石卡扣（暖色呼应画框，区别于华丽版蓝宝石） */
+  body[data-skin="oil"] .stage-inner::before,
+  body[data-skin="oil"] .stage-inner::after{
+    content:"";position:absolute;top:50%;width:28px;height:28px;z-index:4;
+    transform:translate(-50%,-50%) rotate(45deg);border-radius:6px;
+    background:radial-gradient(circle at 38% 32%,#ffe7a8 0%,#d68a23 44%,#7a3d0c 82%);
+    border:2px solid rgba(240,222,168,.95);
+    box-shadow:0 0 16px rgba(255,190,90,.85),inset 0 3px 6px rgba(255,255,255,.65);
+  }
+  body[data-skin="oil"] .stage-inner::before{left:0}
+  body[data-skin="oil"] .stage-inner::after{left:auto;right:0;transform:translate(50%,-50%) rotate(45deg)}
+
+  /* —— 卡片：羊皮纸/象牙 plaque，暖金描边 —— */
+  body[data-skin="oil"] .box{
+    background:radial-gradient(ellipse at 50% -12%,#fffdf3 0%,#f6e9c8 46%,#e7d2a0 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,1),
+      inset 0 0 0 1px rgba(201,162,75,.60),
+      inset 0 -14px 26px rgba(150,110,40,.22),
+      0 14px 28px rgba(0,0,0,.55),
+      0 0 0 2px rgba(214,178,96,.95),
+      0 0 0 3px rgba(80,58,22,.50);
+  }
+  body[data-skin="oil"] .box.soldout{opacity:.60;filter:grayscale(.40) sepia(.22)}
+
+  /* —— 底部丝带：暖棕缎带 —— */
+  body[data-skin="oil"] .hint{
+    position:relative;margin-top:22px;padding:13px 58px;border-radius:10px;color:#f3e3bf;
+    background:linear-gradient(180deg,#6e4f24 0%,#4a3318 46%,#33230f 100%);
+    border:1px solid rgba(201,162,75,.9);
+    box-shadow:
+      inset 0 1px 0 rgba(255,238,190,.30),
+      inset 0 0 0 4px rgba(233,210,154,.14),
+      inset 0 -10px 20px rgba(0,0,0,.45),
+      0 10px 24px rgba(0,0,0,.42);
+  }
+  body[data-skin="oil"] .hint::before,
+  body[data-skin="oil"] .hint::after{
+    content:"";position:absolute;top:50%;transform:translateY(-50%);
+    width:0;height:0;border-top:21px solid transparent;border-bottom:21px solid transparent;
+  }
+  body[data-skin="oil"] .hint::before{left:-29px;border-right:29px solid #33230f}
+  body[data-skin="oil"] .hint::after{right:-29px;border-left:29px solid #33230f}
+  body[data-skin="oil"] kbd{
+    background:linear-gradient(180deg,#7a5a28,#4a3318);
+    border-color:rgba(233,210,154,.70);
+    box-shadow:0 3px 0 rgba(20,12,5,.90),0 8px 16px rgba(0,0,0,.40);
+  }
+
+  /* —— 漂浮珠光：暗底上像画里的发光珠 —— */
+  body[data-skin="oil"] .bg-deco .orb{
+    background:radial-gradient(circle at 33% 28%,#fff7e6 0%,#ffeccb 38%,#e9c79a 70%,rgba(214,150,80,.30) 100%);
+    box-shadow:
+      inset 0 -10px 22px rgba(120,80,30,.22),
+      0 0 50px 16px rgba(255,225,170,.5),
+      0 16px 34px rgba(80,50,10,.22);
+  }
+
+  /* —— 吉祥物：暗底上改用暖色投影 —— */
+  body[data-skin="oil"] .mascot{filter:drop-shadow(0 14px 20px rgba(0,0,0,.55))}
+
+  /* —— 结果层：暖褐暗场（替代海军蓝），结果卡保持米白金边 —— */
+  body[data-skin="oil"] #overlay{
+    background:radial-gradient(ellipse at center, rgba(60,40,20,.95) 0%, rgba(20,12,5,.985) 100%);
+  }
+  /* 绽放压暗：暖色暗角 */
+  body[data-skin="oil"] #bloomDim{
+    background:radial-gradient(circle 52vmin at var(--bx,50%) var(--by,50%),
+      rgba(40,24,10,.30) 0%, rgba(30,16,6,.66) 38%, rgba(18,9,3,.82) 100%);
+  }
+
+</style>
+</head>
+<body>
+<script>/* 首屏皮肤：在渲染前把 data-skin 写到 body 上，避免先画一帧简约版再切（默认华丽版）。
+   判据与 init() 里的迁移逻辑保持一致：oil/luxe 直接沿用；simple 只有在"已迁移过"(skinMig) 时才是用户选择。 */
+(function(){var d="luxe";try{var s=JSON.parse(localStorage.getItem("pearl_lottery_v1")||"null");
+if(s){if(s.skin==="oil"||s.skin==="luxe")d=s.skin;else if(s.skinMig)d="simple";}}catch(e){}
+document.body.dataset.skin=d;})();</script>
+
+<div class="bg-deco" aria-hidden="true">
+  <svg class="bg-corner tl" viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 63A63 63 0 0 1 63 0" fill="none" stroke="#c9a24b" stroke-width="1.4" opacity=".72"/>
+    <path d="M17 63A46 46 0 0 1 63 17" fill="none" stroke="#c9a24b" stroke-width="1" opacity=".34"/>
+    <path d="M18.5 13.2 23.8 18.5 18.5 23.8 13.2 18.5Z" fill="#c9a24b" opacity=".62"/>
+  </svg>
+  <svg class="bg-corner tr" viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 63A63 63 0 0 1 63 0" fill="none" stroke="#c9a24b" stroke-width="1.4" opacity=".72"/>
+    <path d="M17 63A46 46 0 0 1 63 17" fill="none" stroke="#c9a24b" stroke-width="1" opacity=".34"/>
+    <path d="M18.5 13.2 23.8 18.5 18.5 23.8 13.2 18.5Z" fill="#c9a24b" opacity=".62"/>
+  </svg>
+  <svg class="bg-corner bl" viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 63A63 63 0 0 1 63 0" fill="none" stroke="#c9a24b" stroke-width="1.4" opacity=".72"/>
+    <path d="M17 63A46 46 0 0 1 63 17" fill="none" stroke="#c9a24b" stroke-width="1" opacity=".34"/>
+    <path d="M18.5 13.2 23.8 18.5 18.5 23.8 13.2 18.5Z" fill="#c9a24b" opacity=".62"/>
+  </svg>
+  <svg class="bg-corner br" viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 63A63 63 0 0 1 63 0" fill="none" stroke="#c9a24b" stroke-width="1.4" opacity=".72"/>
+    <path d="M17 63A46 46 0 0 1 63 17" fill="none" stroke="#c9a24b" stroke-width="1" opacity=".34"/>
+    <path d="M18.5 13.2 23.8 18.5 18.5 23.8 13.2 18.5Z" fill="#c9a24b" opacity=".62"/>
+  </svg>
+  <span class="orb" style="left:2.5%;top:18%;width:128px;height:128px;opacity:.20;animation-duration:21s;animation-delay:-3s"></span>
+  <span class="orb" style="right:7%;bottom:14%;width:118px;height:118px;opacity:.19;animation-duration:24s;animation-delay:-14s"></span>
+  <span class="orb" style="left:6%;bottom:9%;width:76px;height:76px;opacity:.16;animation-duration:19s;animation-delay:-6s"></span>
+  <svg class="bg-foot" viewBox="0 0 220 34" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="#c9a24b" stroke-width="1" opacity=".5">
+      <path d="M6 17H84M136 17H214"/>
+      <path d="M6 13.5H78M142 13.5H214" opacity=".45"/>
+    </g>
+    <g fill="#c9a24b" opacity=".5">
+      <path d="M91 13 95 17 91 21 87 17Z"/>
+      <path d="M129 13 133 17 129 21 125 17Z"/>
+    </g>
+    <path d="M110 8.6 117.4 17 110 25.4 102.6 17Z" fill="none" stroke="#c9a24b" stroke-width="1.1" opacity=".62"/>
+    <path d="M110 12.4 115 17 110 21.6 105 17Z" fill="#c9a24b" opacity=".40"/>
+  </svg>
+</div>
+
+<!-- v54：页面四角不再挂宝石角饰。那张素材是给展柜用的（带蓝宝石的 L 形转角），
+     放到 168px 后左下那颗正压在珍珠女孩身上，看起来像"女孩贴在一块金框上"。
+     页面四角改由 .bg-deco 里本来就有的 .bg-corner 细金卷草承担（华丽版只把它放大）。
+     另：角饰若要脱离 .bg-deco，注意父级 mix-blend-mode 会连子树一起吃掉。 -->
+
+<div class="banner">
+  <!-- v55：字标分两套（简约版金色绶带 / 华丽版珍珠花环），src 由 applySkin 按皮肤设置。
+       这里刻意不写 src：写了就得两处硬编码，单文件版会退化成"同一张图内联两份"；
+       而留裸文件名又会在单文件版里发 404。走 JS + RES() 才是唯一干净的路径。
+       没有 src 的 img 尺寸为 0，占位靠 CSS 的 aspect-ratio 钉住，不会跳版。 -->
+  <h1 class="serif"><img class="wordmark" alt="珍珠女孩抽奖季"></h1>
+</div>
+
+<div class="stage" id="stage">
+  <div class="stage-inner"></div>
+  <img class="luxe-sgem tl" data-art="gem.png" alt="">
+  <img class="luxe-sgem tr" data-art="gem.png" alt="">
+  <img class="luxe-sgem bl" data-art="gem.png" alt="">
+  <img class="luxe-sgem br" data-art="gem.png" alt="">
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="hint"><img class="luxe-tbow l" data-art="bow.png" alt=""><kbd>空格</kbd> 或 <kbd>Enter</kbd> 开始抽奖<img class="luxe-tbow r" data-art="bow.png" alt=""></div>
+
+<canvas id="fx"></canvas>
+<div id="bloomDim" aria-hidden="true"></div>
+
+<div id="overlay">
+  <div class="result-card" id="resultCard">
+    <div class="card-halo" aria-hidden="true"></div>
+    <div class="card-sweep"></div>
+    <div class="rule-orn"><span></span></div>
+    <div class="result-label" id="resultLabel">— 恭喜您获得 —</div>
+    <div class="serif" id="resultName">奖品名称</div>
+    <div id="resultTier"></div>
+    <div class="result-tip">按 空格 / Enter 继续</div>
+  </div>
+</div>
+
+<div class="mascot" id="mascot">
+  <div class="bubble" id="bubble"></div>
+  <div class="mbody"><img alt="珍珠女孩" id="mascotImg"></div>
+</div>
+
+<img class="brand-logo" src="brand-logo.png" alt="泰富集团">
+<button id="gear" title="工作人员设置">⚙</button>
+
+<div id="adminMask">
+  <div class="admin" id="adminPanel" style="display:none">
+    <header><span>✦ 奖品与概率设置（工作人员）</span><button onclick="closeAdmin()">✕</button></header>
+    <div class="body">
+      <div class="addrow" style="margin-bottom:14px">
+        <span style="align-self:center;font-weight:700;color:#7a6430;white-space:nowrap">✦ 皮肤</span>
+        <select id="skinSel" onchange="pickSkin(this.value)"
+                style="align-self:center;padding:7px 12px;border-radius:8px;border:1px solid #d8c99a;font-size:14px;font-family:inherit">
+          <option value="simple">简约版（米白底）</option>
+          <option value="luxe">华丽版（深蓝丝绒 + 金框）</option>
+        <option value="oil">油画版（古典暖调油画框）</option>
+        </select>
+        <span style="align-self:center;color:#9a8a5c;line-height:1.7">
+          切换立即生效、无需保存；选择记在本机，下次打开保持。
+        </span>
+      </div>
+      <table class="plist">
+        <thead><tr>
+          <th>启用</th><th>奖品名称</th><th>奖项名<br>（格子角标）</th><th>图标</th><th>类型</th><th>权重<br>（定概率）</th><th>当前概率</th><th>库存<br>(-1=不限)</th><th>已抽出</th><th>操作</th>
+        </tr></thead>
+        <tbody id="plistBody"></tbody>
+      </table>
+      <div class="addrow">
+        <button class="btn" onclick="addPrize()">＋ 添加奖品</button>
+        <button class="btn" onclick="balanceByStock()" title="让各档消耗速度与库存配额成比例，抽满总配额时刚好同时抽完">⚖ 按库存均衡权重</button>
+        <label style="align-self:center;display:flex;align-items:center;gap:6px;color:#7a6430;font-weight:700;cursor:pointer;white-space:nowrap">
+          <input type="checkbox" id="adaptChk" onchange="toggleAdapt(this)" style="width:16px;height:16px"> 库存自适应
+        </label>
+        <span style="align-self:center;color:#9a8a5c;line-height:1.7">
+          概率 = 该奖品权重 ÷ 所有「启用且有库存」奖品的权重之和；<b>库存为 0 自动不再抽出</b>，概率自动让给其他奖品。<br>
+          「库存自适应」开启后某档余量越少权重自动越低（系数 0.4~1.0），防止它在活动前期就被抽光；关掉即纯固定概率。<br>
+          「图标」选<b>自动</b>按奖品名智能识别，也可手动指定；「奖项名」是格子角标，<b>留空即不显示</b>；库存填 <b>-1</b> 表示不限量。
+        </span>
+      </div>
+      <div id="poolStat"></div>
+      <div id="logBox"></div>
+    </div>
+    <div class="foot">
+      <div class="grp">
+        <button class="btn primary" onclick="saveAdmin()">💾 保存并生效</button>
+        <button class="btn" onclick="exportCfg()">导出配置</button>
+        <button class="btn" onclick="document.getElementById('impFile').click()">导入配置</button>
+        <input type="file" id="impFile" accept=".json" style="display:none" onchange="importCfg(this)">
+        <button class="btn" onclick="exportLogCsv()">导出中奖记录(CSV)</button>
+        <button class="btn" onclick="exportStockCsv()">导出库存汇总(CSV)</button>
+      </div>
+      <div class="grp">
+        <span>管理密码 <input type="text" id="adminPass" style="width:90px;padding:4px 8px;border:1px solid #d8c99a;border-radius:6px"></span>
+        <button class="btn" onclick="resetStock()">库存全部还原</button>
+        <button class="btn danger" onclick="factoryReset()">恢复出厂</button>
+      </div>
+    </div>
+  </div>
+  <div class="admin passbox" id="passPanel" style="display:none">
+    <div style="font-size:18px;letter-spacing:4px;color:#7a6430;margin-bottom:18px">✦ 请输入管理密码 ✦</div>
+    <input type="password" id="passInput" autofocus>
+    <div class="err" id="passErr"></div>
+    <button class="btn primary" onclick="tryPass()">确 认</button>
+    <button class="btn" onclick="closeAdmin()">取 消</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ================= 持久化 ================= */
+const KEY = "pearl_lottery_v1";
+let memStore = null; // file:// 下 localStorage 异常时兜底
+function loadStore(){
+  try{ const raw = localStorage.getItem(KEY); if(raw) return JSON.parse(raw); }catch(e){ if(memStore) return JSON.parse(JSON.stringify(memStore)); }
+  return null;
+}
+function saveStore(){
+  const data = JSON.stringify({prizes, adminPass, log, stats, presetV, stockAdapt, skin, skinMig});
+  try{ localStorage.setItem(KEY, data); }catch(e){ memStore = JSON.parse(data); }
+}
+const PRESET_V = 2;                     // 预设版本号：用于老数据自动升级
+const LEGACY_NAMES = ["珍珠项链","护肤礼盒","珍珠耳饰","优惠券","幸运伴手礼"];
+/* 默认奖品池：四档主题奖（库存即配额）+ 一档普惠礼（不限量，兜底必中）
+   权重默认按「库存配额」比例设定 → 抽奖次数接近总库存时各档同时抽完，不浪费、不提前抽空。
+   全部字段均可在后台增删改，此处只是出厂值。 */
+function defaultPrizes(){return [
+  {name:"沧海明珠", tier:"一等奖", icon:"necklace", weight:5,   stock:5,   init:5,   enabled:true, kind:"award"},
+  {name:"珠玉在侧", tier:"二等奖", icon:"diamond",  weight:15,  stock:15,  init:15,  enabled:true, kind:"award"},
+  {name:"暗香浮珠", tier:"三等奖", icon:"bottle",   weight:80,  stock:80,  init:80,  enabled:true, kind:"award"},
+  {name:"佩光而行", tier:"四等奖", icon:"star",     weight:200, stock:200, init:200, enabled:true, kind:"award"},
+  {name:"拾光小礼", tier:"",       icon:"gift",     weight:60,  stock:-1,  init:-1,  enabled:true, kind:"gift"},
+];}
+/* 是否仍是「旧版默认池」——是才自动换新，用户改过的一律保留 */
+function isLegacyDefault(list){
+  if(!Array.isArray(list) || list.length!==LEGACY_NAMES.length) return false;
+  const names = list.map(p=>p && p.name);
+  return LEGACY_NAMES.every(n=>names.indexOf(n)>=0);
+}
+let prizes, adminPass, log, stats, presetV=1, stockAdapt=true;
+const DEFAULT_SKIN = "luxe";   // 默认皮肤：华丽版（改这一行即可换默认，新访客/清缓存后生效）
+let skin = DEFAULT_SKIN;       // "simple" | "luxe" | "oil"，进本地配置
+let skinMig = 0;               // 皮肤默认值迁移标记：老记录（无此字段）→ 旧默认 simple 升到新默认
+function migratePrizes(list){
+  let changed=false;
+  list.forEach(p=>{
+    if(!p.kind){ p.kind = p.tier ? "award" : "gift"; changed=true; }
+    if(/谢谢参与|再来一次/.test(p.name)){ p.name="拾光小礼"; p.tier=""; p.kind="gift"; changed=true; }
+    if(p.tier){
+      const esc = p.tier.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const re  = new RegExp("^"+esc+"[\\s·・\\-—:：]*");
+      const nn  = p.name.replace(re, "");
+      if(nn && nn!==p.name){ p.name=nn; changed=true; }
+    }
+  });
+  return changed;
+}
+(function init(){
+  const s = loadStore();
+  if(s && s.prizes){
+    prizes=s.prizes; adminPass=s.adminPass||"8888"; log=s.log||[]; stats=s.stats||{};
+    stockAdapt = s.stockAdapt !== false;
+    skin = (s.skin === "luxe") ? "luxe" : (s.skin === "oil" ? "oil" : "simple");
+    skinMig = s.skinMig || 0;
+    // 老记录（v1 存储没有 skinMig）：skin="simple" 是**旧的默认值**（每次 init 都会写入），
+    // 不是用户选择 → 一次性升级到新默认「华丽版」；oil/luxe 是显式选择，保留不动。
+    if(!skinMig){
+      if(skin === "simple") skin = DEFAULT_SKIN;
+      skinMig = 1; saveStore();
+    }
+    if(migratePrizes(prizes)) saveStore();
+    // 预设升级：仅当存下来的仍是「旧版默认池」时才换新，用户自行配过的一律保留
+    if((s.presetV||1) < PRESET_V){
+      if(isLegacyDefault(prizes)){ prizes=defaultPrizes(); log=[]; stats={}; }
+      presetV = PRESET_V; saveStore();
+    } else presetV = s.presetV || PRESET_V;
+  }
+  else{ prizes=defaultPrizes(); adminPass="8888"; log=[]; stats={}; presetV=PRESET_V; stockAdapt=true;
+        skinMig=1;   // 全新记录已经是新默认皮肤，直接标记"已迁移"，别让后续的显式选择被旧默认迁移覆盖
+        saveStore(); }
+})();
+
+/* ================= 奖品格子墙（与真实奖品绑定） ================= */
+const grid = document.getElementById("grid");
+const stageEl = document.getElementById("stage");
+let enterTimer = null;
+let firstEntrance = true;   // 入场动画只在首次构建时播放（保存配置/窗口变化不重播）
+let prizeBoxes = [];     // 与 visiblePrizes 同序的 DOM 盒子
+let visiblePrizes = [];  // 当前启用的奖品（含已抽完的）
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+const ICONS={
+  necklace:'<svg viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"><path d="M11 8c0 15.5 5.8 26 13 26s13-10.5 13-26"/><circle cx="15.2" cy="20.6" r="2" fill="#fffdf6"/><circle cx="19.6" cy="28.6" r="2" fill="#fffdf6"/><circle cx="28.4" cy="28.6" r="2" fill="#fffdf6"/><circle cx="32.8" cy="20.6" r="2" fill="#fffdf6"/><circle cx="24" cy="37.6" r="4.6" fill="#fffdf6"/></svg>',
+  gift:'<svg viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="19" width="28" height="19" rx="2.5" fill="#fffdf6"/><path d="M8.5 13.5h31V19h-31z" fill="#fffdf6"/><path d="M24 13.5v24.5"/><path d="M24 13.5c-2.6-4.6-8.8-5.4-9.7-1.9-.8 3 3.6 4.2 9.7 1.9z"/><path d="M24 13.5c2.6-4.6 8.8-5.4 9.7-1.9.8 3-3.6 4.2-9.7 1.9z"/></svg>',
+  earring:'<svg viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"><path d="M17.2 10.4c0-2.3 1.9-4.2 4.3-4.2s4.3 1.9 4.3 4.2c0 6.6-8.6 8.6-8.6 16.4"/><circle cx="17.2" cy="30.2" r="3.4" fill="#fffdf6"/><path d="M17.2 33.6c2.3 2.5 3.5 3.8 3.5 5.5a3.5 3.5 0 0 1-7 0c0-1.7 1.2-3 3.5-5.5z" fill="#fffdf6"/></svg>',
+  ticket:'<svg viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 15.5h29a2 2 0 0 1 2 2v3.4a3.5 3.5 0 0 0 0 7v3.4a2 2 0 0 1-2 2h-29a2 2 0 0 1-2-2v-3.4a3.5 3.5 0 0 0 0-7v-3.4a2 2 0 0 1 2-2z" fill="#fffdf6"/><path d="M19 17.5v13.6" stroke-dasharray="3 3.4"/></svg>',
+  ribbon:'<svg viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"><path d="M24 20.5c-4.2-6.6-11.6-6.2-11.6-1.3 0 4.7 6.8 5.2 11.6 1.3z" fill="#fffdf6"/><path d="M24 20.5c4.2-6.6 11.6-6.2 11.6-1.3 0 4.7-6.8 5.2-11.6 1.3z" fill="#fffdf6"/><circle cx="24" cy="20.5" r="2.6" fill="#fffdf6"/><path d="M24 23.1c-.4 5.6-1.6 8.8-4.6 12.2"/><path d="M24 23.1c.4 5.6 1.6 8.8 4.6 12.2"/></svg>',
+  diamond:'<svg viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 11h13l4.2 5.6L24 25.4 9.3 16.6z" fill="#fffdf6"/><path d="M17.5 11 24 16.6l6.5-5.6M9.3 16.6h29.4M24 16.6v8.8"/><circle cx="24" cy="34" r="7.4" fill="#fffdf6"/></svg>',
+  bottle:'<svg viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"><rect x="13.5" y="18.5" width="21" height="21" rx="3.6" fill="#fffdf6"/><path d="M18.8 18.5v-3.4h10.4v3.4"/><rect x="20.6" y="9.2" width="6.8" height="5.9" rx="1.4" fill="#fffdf6"/><path d="M20.6 12.2h-4.4"/><path d="M17.5 27.2h13"/></svg>',
+  cup:'<svg viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"><path d="M14 17h20l-2.2 21a3 3 0 0 1-3 2.7h-9.6a3 3 0 0 1-3-2.7z" fill="#fffdf6"/><rect x="12.4" y="12.4" width="23.2" height="5.1" rx="2" fill="#fffdf6"/><rect x="20.4" y="7.4" width="7.2" height="5" rx="1.6" fill="#fffdf6"/></svg>',
+  bag:'<svg viewBox="0 0 48 48" fill="none" stroke="#c9a24b" stroke-width="1.62" stroke-linecap="round" stroke-linejoin="round"><path d="M18.4 20.5V15a5.6 5.6 0 0 1 11.2 0v5.5"/><rect x="11" y="20.5" width="26" height="19" rx="2.6" fill="#fffdf6"/><path d="M20 27.6h8"/></svg>',
+  star:'<svg viewBox="0 0 48 48" fill="#c9a24b" stroke="none"><path d="M24 7c1.7 8.9 3.9 11.1 12.8 12.8-8.9 1.7-11.1 3.9-12.8 12.8-1.7-8.9-3.9-11.1-12.8-12.8C20.1 18.1 22.3 15.9 24 7z"/></svg>'
+};
+const ICON_LABELS=[
+  ["","自动识别"],["necklace","项链 / 珠宝"],["earring","耳饰 / 耳环"],["diamond","钻饰 / 戒指"],
+  ["gift","礼盒 / 礼品"],["bottle","护肤 / 美妆瓶"],["cup","杯壶 / 保温杯"],["bag","箱包 / 手提袋"],
+  ["ticket","券 / 卡 / 票"],["ribbon","丝带结"],["star","星芒（通用）"]
+];
+function iconKeyFor(p){
+  if(p.icon && ICONS[p.icon]) return p.icon;   // 后台显式指定 → 优先级最高，不看名字
+  const t=(p.tier||"")+" "+(p.name||"");
+  if(p.kind==="gift") return "ribbon";
+  if(/券|卡|票|代金|抵扣|兑换/.test(t)) return "ticket";
+  if(/项链|珠宝|珠链|首饰|金饰|手链|手镯/.test(t)) return "necklace";
+  if(/耳饰|耳环|耳钉|耳坠/.test(t)) return "earring";
+  if(/钻|戒指/.test(t)) return "diamond";
+  if(/礼盒|礼包|套装|礼篮|伴手|礼品/.test(t)) return "gift";
+  if(/瓶|霜|精华|化妆|美妆|面膜|护肤/.test(t)) return "bottle";
+  if(/杯|壶|保温/.test(t)) return "cup";
+  if(/包|箱|袋/.test(t)) return "bag";
+  if(/特等|头等|一等/.test(t)) return "necklace";
+  if(/二等/.test(t)) return "diamond";
+  if(/三等/.test(t)) return "bottle";
+  if(/四等/.test(t)) return "star";
+  if(/五等|六等/.test(t)) return "ticket";
+  return "star";
+}
+function buildGrid(){
+  grid.innerHTML=""; prizeBoxes=[]; visiblePrizes=prizes.filter(p=>p.enabled);
+  const n=visiblePrizes.length;
+  if(!n) return;
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const bcs=getComputedStyle(document.body);
+  const padX=parseFloat(bcs.paddingLeft)||0, padY=parseFloat(bcs.paddingTop)||0;
+  const stcs=getComputedStyle(grid.parentNode);        // #stage
+  const stPadX=parseFloat(stcs.paddingLeft)||0;
+  const stPadY=(parseFloat(stcs.paddingTop)||0)+(parseFloat(stcs.paddingBottom)||0);
+  /* 展柜的 width 是 border-box（全局 box-sizing:border-box），含左右边框。
+     算"卡片能用多宽"时漏掉 border，availW 就比真实 content box 大一个边框宽
+     —— 简约版 2px、华丽版 6px。两行布局时卡片从不顶到柜壁，这 6px 一直埋着；
+     改一行排开后卡片正好铺满，6px 立刻发作：5×225+4×32=1253 > 真实 1250，
+     差 3px 就把第五格挤到第二行，一行塌回「上4下1」。 */
+  const stBdX=(parseFloat(stcs.borderLeftWidth)||0)+(parseFloat(stcs.borderRightWidth)||0);
+  /* 可用宽：避开左下角 fixed 的珍珠女孩人像。
+     旧代码写死 mascotW=620，那是"人像在右侧"时代的遗留 —— 人像早已移到左下角、
+     实际只有 236px 宽，这个数字白砍了 620px 可用宽，是「横向大片闲置 + 奖区偏小」的直接原因。
+     改为实测人像右缘、展柜左右对称收缩让开它；换分辨率或改人像尺寸都会自动跟随。 */
+  let frameW = vw-padX*2;                              // 展柜最大外框宽
+  const mc=document.querySelector('#mascot');
+  if(mc && getComputedStyle(mc).display!=='none'){
+    const mr=mc.getBoundingClientRect();
+    if(mr.width>2) frameW=Math.max(420, frameW-2*Math.max(0, mr.right+20-padX));
+  }
+  const availW = Math.max(300, frameW-stPadX*2-stBdX);
+  /* 预算高：实测标题与提示，替代写死的 430。
+     改完标题高度不必再手工维护魔法数字 —— 省下的高度自动流向奖区。 */
+  const wm=document.querySelector('.wordmark'), bn=document.querySelector('.banner'), hn=document.querySelector('.hint');
+  let titleH=134;
+  if(wm){ const r=wm.getBoundingClientRect(); if(r.height>2) titleH=r.height; }
+  const bnMb=bn?(parseFloat(getComputedStyle(bn).marginBottom)||0):0;
+  const hnH=hn?hn.getBoundingClientRect().height:0;
+  const hnMt=hn?(parseFloat(getComputedStyle(hn).marginTop)||0):0;
+  const availH = Math.max(180, vh-padY*2-titleH-bnMb-hnH-hnMt-stPadY-8);
+  /* 上限：原来不论屏幕多大都卡死 186px（1080 屏上奖区只占 17% 视口高）。
+     现在只作极端兜底，实际尺寸交给宽/高双约束去定。 */
+  const maxB = n<=5 ? 300 : 240;
+  const minB = 160;   // 单格可读下限：一排塞到比这还窄，就不如换行
+  /* 给定 gap 求解：列数 + 单格尺寸（受宽、高双重约束，且不超过 maxB）。
+     两条硬判据，各对应一种被用户直接否掉的形态：
+       ① 行数 >1 而底行只有 1 格 → 不合格。这就是「上4下1」：底行孤悬一格居中，
+          上一排 4 格把视线全吸走，下面那格像是没地方放了随手扔下的。
+       ② 该列数算出的单格 < minB → 不合格。宁可多排一行，也不把奖品名挤到看不清。
+     评分里「单行」权重最重：奖品格子本身就是奖品等级从高到低的自左向右序列，
+     一旦折成两行，这个序列就断成上下两段，读不出"越靠左越贵重"。
+     旧评分 `bw*2 + sym*30 - rows*8` 是尺寸优先 —— 列数少则每格更宽、分数更高，
+     于是展柜一窄 5 个奖品就滑进 4+1。现在尺寸退居次要，整齐度优先。 */
+  const solve = (g) => {
+    const boxOf = c => {
+      const rows = Math.ceil(n/c);
+      const bw = Math.min(maxB, Math.floor((availW-(c-1)*g)/c));
+      const bh = Math.floor((availH-(rows-1)*g)/rows);
+      return Math.max(0, Math.min(bw, bh));
+    };
+    const shapeOf = c => {                        // 形态合格性（不合格返回 null）
+      const rows = Math.ceil(n/c);
+      const last = (n%c===0) ? c : (n%c);
+      if(rows > 1 && last < 2) return null;       // 判据①：禁止孤行
+      return {rows:rows, sym:last/c};
+    };
+    let best = null;
+    for(let c=Math.min(n,8); c>=2; c--){
+      const sp = shapeOf(c); if(!sp) continue;
+      const w = boxOf(c); if(w < minB) continue;  // 判据②：单格太窄
+      const score = (sp.rows===1 ? 260 : 0) - (sp.rows-1)*900 + sp.sym*120 + w;
+      if(!best || score > best.score) best = {cols:c, boxw:w, score:score};
+    }
+    if(!best){                                    // 全部不合格（极窄屏 / 矮屏）：退到"尺寸最大且无孤行"
+      for(let c=Math.min(n,8); c>=2; c--){
+        const sp = shapeOf(c); if(!sp) continue;
+        const w = boxOf(c);
+        if(!best || w > best.boxw) best = {cols:c, boxw:w};
+      }
+    }
+    let w = best ? best.boxw : boxOf(1);
+    if(w < 44) w = 44;                            // 仅防极端（奖品极多 / 极矮屏）
+    return {cols: best ? best.cols : 1, boxw:w};
+  };
+  /* gap 随卡片一起放大：186 卡片 ↔ 26px 是本页原设计的比例(0.14)。
+     卡片长到 300 后若还用 26，间距相对只剩一半，整排会显得挤。
+     尺寸依赖 gap、gap 又依赖尺寸，故迭代几次即收敛。 */
+  let gap = n<=5 ? 26 : 22, cols = 1, boxw = 186;
+  for(let it=0; it<4; it++){
+    const r = solve(gap); cols = r.cols; boxw = r.boxw;
+    const ng = Math.max(14, Math.round(boxw*(n<=5?0.14:0.12)));
+    if(ng === gap) break;
+    gap = ng;
+  }
+  /* 收敛后再用最终 gap 复算一次。gap 是由 boxw 反推的、boxw 又是由 gap 算出来的，
+     两者互为输入，会在两档之间小幅震荡（1920 下实测 225/32 → 224/31 → 225/32），
+     循环退出时留下的那组是"错配"的：boxw=225 配 gap=32 得到 5×225+4×32=1253，
+     比可用宽 1250 多 3px —— 第五格被 flex 挤到第二行，一行又变成「上4下1」。
+     复算一次即锁死：boxw 由最终 gap 求得，总宽必然 ≤ 可用宽（boxOf 里向下取整）。 */
+  { const r = solve(gap); cols = r.cols; boxw = r.boxw; }
+  const sizeClass = boxw < 86 ? " tiny" : (boxw < 112 ? " small" : "");
+  const rows = Math.ceil(n/cols);
+  const totalH = rows*boxw + (rows-1)*gap;
+  // 极端数量/矮屏：若仍超出可用高度，画框内滚动兜底（不溢出）
+  if(totalH > availH){ grid.style.maxHeight = availH+"px"; grid.style.overflowY = "auto"; grid.style.overflowX = "hidden"; }
+  else { grid.style.maxHeight = ""; grid.style.overflowY = ""; grid.style.overflowX = ""; }
+  grid.style.gap = gap+"px";
+  grid.style.maxWidth = (cols*boxw+(cols-1)*gap)+"px";
+  /* 展柜宽度：固定吃到可用宽，卡片在柜内居中。
+     原来展柜宽度是"包住网格"（= 卡区 + padding），卡片一旦变大，柜体就跟着变成竖长盒子、
+     左右空出大片奶油底，丢了"橱窗"的容器感。改为柜体吃满可用宽。 */
+  grid.parentNode.style.width = Math.max(cols*boxw+(cols-1)*gap+stPadX*2+stBdX, frameW)+"px";
+  visiblePrizes.forEach((p,i)=>{
+    const d=document.createElement("div");
+    const isTop = p.tier && /特等|头等|一等|第一|金奖|大奖|头奖|至尊/.test(p.tier);
+    d.className="box"+(p.kind==="gift"?" gift":"")+(isTop?" top":"")+sizeClass;
+    d.style.width=boxw+"px"; d.style.height=boxw+"px";
+    d.style.setProperty("--i",i);
+    d.style.setProperty("--k",(boxw/186).toFixed(4));   // 卡内元素等比缩放（基准 = 历史尺寸 186）
+    d.innerHTML=
+      '<span class="halo"></span>'+
+      (p.tier?'<div class="tier-tag">'+escapeHtml(p.tier)+'</div>':'')+
+      '<div class="box-content">'+
+        '<div class="ico">'+ICONS[iconKeyFor(p)]+'</div>'+
+        '<div class="rule"></div>'+
+        '<div class="pname serif">'+escapeHtml(p.name)+'</div>'+
+      '</div>';
+    grid.appendChild(d); prizeBoxes.push(d);
+  });
+  if(firstEntrance){ firstEntrance = false; playEntrance(); }
+  refreshSoldout();
+  if(state==="idle"){ pIdle({reseed:true}); }   // 展柜尺寸变了 → 重撒并淡入
+}
+
+/* 入场：格子逐格点亮 */
+function playEntrance(){
+  clearTimeout(enterTimer);
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce || !prizeBoxes.length) return;
+  prizeBoxes.forEach(b=>b.classList.add("enter"));
+  enterTimer = setTimeout(()=>prizeBoxes.forEach(b=>b.classList.remove("enter")), 120 + prizeBoxes.length*85 + 780);
+}
+
+function refreshSoldout(){
+  prizeBoxes.forEach((box,i)=>{
+    const p=visiblePrizes[i];
+    const sold = !!(p && p.stock===0);
+    box.classList.toggle("soldout", sold);
+    let s=box.querySelector(".sold");
+    if(sold){ if(!s){s=document.createElement("div");s.className="sold";s.textContent="已抽完";box.appendChild(s);} }
+    else if(s){s.remove();}
+  });
+}
+
+/* ================= 抽奖核心 ================= */
+let state="idle"; // idle | anim | result
+let litTimer=null, landTimer=null, pearlT=null, revealT=null, bloomTimer=null;
+function eligible(){ return prizes.filter(p=>p.enabled && p.stock!==0); }
+/* 库存自适应：余量越少、权重越低（系数 0.40~1.00）。
+   作用：避免某一档在活动前期被抽光，把奖品全压在最后几格；也避免高等级奖提前耗尽。
+   库存不限（-1）的普惠礼不参与调节。关掉开关即回到纯固定概率。 */
+function effWeight(p){
+  if(!stockAdapt || p.stock<0) return p.weight;
+  const init = p.init>0 ? p.init : 1;
+  const ratio = Math.max(0, Math.min(1, p.stock/init));
+  return p.weight * (0.40 + 0.60 * Math.pow(ratio, 0.7));
+}
+function pickPrize(){
+  const pool=eligible();
+  if(!pool.length) return null;
+  const w=pool.map(effWeight);
+  const total=w.reduce((a,b)=>a+b,0);
+  if(total<=0) return null;
+  let r=Math.random()*total;
+  for(let i=0;i<pool.length;i++){ r-=w[i]; if(r<0) return pool[i]; }
+  return pool[pool.length-1];
+}
+const overlay=document.getElementById("overlay");
+
+function startDraw(){
+  state="anim";
+  clearDrawFx();
+  clearTimeout(landTimer);
+  prizeBoxes.forEach(b=>b.classList.remove("win","lit","land"));
+  stageEl.classList.add("drawing");
+  { const bd=document.getElementById("bloomDim"); if(bd) bd.classList.remove("show"); }   // 兜底：上一轮若异常中断，别留着一层暗罩
+  setMascot("watch");
+  /* ② 开始：珠群从漂浮状态"突然汇聚"；③ 抽奖：汇聚完成后转为沿轨迹高速运动 */
+  if(!PEARL.seeded) seedPearls();
+  pGather();
+  clearTimeout(pearlT);
+  pearlT=setTimeout(pOrbit, D_GATHER);
+  const winner=pickPrize();
+  const N=prizeBoxes.length;
+  const winIdx = winner ? visiblePrizes.indexOf(winner) : -1;
+  let idx=0, delay=55, elapsed=0, total=2300;
+  function step(){
+    prizeBoxes.forEach(b=>b.classList.remove("lit"));
+    prizeBoxes[idx%N].classList.add("lit");
+    tick();
+    idx++; elapsed+=delay;
+    if(elapsed>=total){
+      /* 收尾重排（v46）：落点锁定 → 珠群收束 → 抵达那一拍才化圆 → 绽放。
+         原实现是「立刻写半径 + 挂 .win」，实测 .box.win 出现在收尾后 0ms，
+         而珠群要到 432ms 才开始收束 —— 中间 212ms 是「卡已经圆了、珠子还在乱飞」。
+         现在把变圆推迟到珠群落地那一帧，它才是“落地”的信号。 */
+      const land = winIdx>=0 ? winIdx : Math.floor(Math.random()*N);
+      prizeBoxes.forEach(b=>b.classList.remove("lit"));
+      stageEl.classList.remove("drawing");
+      const landBox = prizeBoxes[land];
+      if(landBox) landBox.classList.add("land");
+      /* ④ 停止：珠群收束到落点格中心（先留一拍定格再起步） */
+      pearlT=setTimeout(()=>pImplode(landBox), 60);
+      /* ⑤ 落地：珠群抵达的那一帧格子才化圆 */
+      landTimer=setTimeout(()=>landWin(landBox), 580);
+      /* ⑥ 绽放：与落地几乎同一拍（间隔 20ms）。原来这里是 810，与收束结束点
+         差了 230ms —— 珠子已经收没、格子还没变圆、光也没起，画面是空的，
+         看起来像卡了一拍。爆点紧贴落地，才读作"珠子撞进去 → 光就炸开"。 */
+      bloomTimer=setTimeout(()=>reveal(winner), 600);
+      return;
+    }
+    delay = 55 + Math.pow(elapsed/total,3)*220; // 越来越慢
+    litTimer=setTimeout(step,delay);
+  }
+  step();
+}
+
+/* 抽奖期的临时状态收尾：清掉跑马灯的定时器与珠群的定时器，并摘掉 drawing
+   （drawing 现在只负责把非中奖格压暗到 .82）。原函数里的聚光灯收尾已随聚光灯删除。 */
+function clearDrawFx(){
+  clearTimeout(landTimer);
+  clearTimeout(pearlT);
+  clearTimeout(bloomTimer);
+  stageEl.classList.remove("drawing");
+  prizeBoxes.forEach(b=>b.classList.remove("land"));   // 落点锁定的金边必须一并收回
+}
+function reveal(winner){
+  clearTimeout(litTimer);
+  state="result";
+  prizeBoxes.forEach(b=>b.classList.remove("lit"));
+  if(!winner){
+    prizeBoxes.forEach(b=>b.classList.remove("land"));
+    showResult("奖品已抽完","感谢参与","",false);
+    winSound("none"); setMascot("thanks");
+    setTimeout(pIdle,620);
+    return;
+  }
+  // 库存实时扣减 + 中奖记录（普惠礼也记录，便于统计真实参与量）
+  if(winner.stock>0) winner.stock--;
+  stats[winner.name]=(stats[winner.name]||0)+1;
+  log.unshift({t:new Date().toLocaleString("zh-CN"),name:winner.name,tier:winner.tier||""});
+  if(log.length>2000) log.length=2000;
+  saveStore();
+  refreshSoldout();
+  const isGift = winner.kind==="gift";
+  /* ⑤ 中奖："啪"——一颗巨大珍珠在收束点绽放（普惠礼收小一号）
+     ⑥ 奖品出现：绽放顶点之后，结果卡才带着金色光晕浮出，奖品名随后压轴 */
+  pBloom(!isGift);
+  popSound();
+  clearTimeout(revealT);
+  revealT=setTimeout(()=>{
+    if(state!=="result") return;
+    showResult(winner.name, isGift?"— 赠您一份心意 —":"— 恭喜您获得 —", winner.tier, !isGift);
+    winSound(isGift?"gift":"award");
+    setMascot(isGift?"gift":"win", isGift?0:tierRank(winner.tier));
+    if(!isGift) burst();
+  }, isGift?820:900);
+}
+/* 奖项名次 → 结果卡尺度系数。0 = 无奖项名（普惠礼），1..5 = 一等..五等。
+   系数按 1080p 标定，再乘视口高度系数收档：1366×768 上直接套用会把一等奖卡
+   撑到 ~590px 高、逼近屏边。k 只降不升，大屏上不无谓放大；下限 0.78 是为了不让
+   小屏上的小奖卡比改动前还小（改动前是 451px 宽的固定尺寸）。
+   ⚠️ 四等奖必须 > 普惠礼：普惠礼的副标题「— 赠您一份心意 —」比「— 恭喜您获得 —」
+   多一个字，卡宽天然更宽；第一版给四等奖 1.05、普惠礼 1.00，量出来普惠礼 534px
+   反而压过四等奖 524px，层级是倒的。
+   ⚠️ 基准档（普惠礼）不能太保守：它才是绝大多数人抽到的结果，第一版给 0.95，
+   只比改动前大 12%，等于没解决问题。 */
+const RC_BY_RANK=[1.15, 1.90, 1.65, 1.45, 1.32, 1.15];
+const CN_NUM={一:1,二:2,三:3,四:4,五:5,六:6};
+function tierRank(t){
+  const m=/^第?(.)等奖/.exec((t||"").trim());
+  return (m&&CN_NUM[m[1]])||0;
+}
+function showResult(name,label,tier,festive){
+  document.getElementById("resultLabel").textContent=label;
+  const n=document.getElementById("resultName");
+  n.textContent=name;
+  n.classList.toggle("jackpot",festive);
+  document.getElementById("resultTier").textContent=tier?("✦ "+tier+" ✦"):"";
+  const card=document.getElementById("resultCard");
+  if(card){
+    const base=RC_BY_RANK[Math.min(tierRank(tier),5)]||1;
+    const k=Math.max(.78, Math.min(1, innerHeight/1000));
+    card.style.setProperty("--rc",(base*k).toFixed(3));
+  }
+  overlay.classList.add("show");
+}
+function dismissResult(){
+  overlay.classList.remove("show");
+  const bd=document.getElementById("bloomDim"); if(bd) bd.classList.remove("show");
+  state="idle";
+  clearDrawFx();
+  clearTimeout(revealT);
+  prizeBoxes.forEach(b=>{ b.classList.remove("win"); b.style.borderRadius=""; });   // 内联半径必须同步清掉，否则该格下一轮仍是圆
+  setMascot("idle");
+  PEARL.bloom=null;
+  pIdle({reseed:true});   // 回到 ① 待机：重撒新珠 + 淡入生成（不做「从卡片位置飘回四角」的归位）
+}
+
+/* ================= 音效（本地合成，无外部资源） ================= */
+let AC=null;
+function ac(){ if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}} return AC; }
+function tick(){
+  const c=ac(); if(!c)return;
+  const o=c.createOscillator(),g=c.createGain();
+  o.type="triangle";o.frequency.value=784;
+  g.gain.setValueAtTime(.026,c.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.05);
+  o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.06);
+}
+function winSound(mode){
+  const c=ac(); if(!c)return;
+  const notes = mode==="award" ? [523,659,784,1046] : mode==="gift" ? [523,659,784] : [392,330];
+  const type  = mode==="none" ? "sine" : "triangle";
+  notes.forEach((f,i)=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.type=type;o.frequency.value=f;
+    const t=c.currentTime+i*.16;
+    g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.5);
+    o.connect(g).connect(c.destination);o.start(t);o.stop(t+.55);
+  });
+}
+
+/* "啪"——绽放那一瞬：低频冲击 + 带通噪声爆裂 + 一颗珠子落定的清脆尾音 */
+function popSound(){
+  const c=ac(); if(!c) return;
+  const t=c.currentTime;
+  const o=c.createOscillator(),g=c.createGain();
+  o.type="sine";o.frequency.setValueAtTime(330,t);
+  o.frequency.exponentialRampToValueAtTime(54,t+.16);
+  g.gain.setValueAtTime(.26,t);g.gain.exponentialRampToValueAtTime(.001,t+.30);
+  o.connect(g).connect(c.destination);o.start(t);o.stop(t+.32);
+  const n=Math.floor(c.sampleRate*.09), buf=c.createBuffer(1,n,c.sampleRate), d=buf.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3.4);
+  const s=c.createBufferSource(); s.buffer=buf;
+  const bp=c.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=2700; bp.Q.value=.85;
+  const ng=c.createGain(); ng.gain.setValueAtTime(.30,t);
+  s.connect(bp).connect(ng).connect(c.destination); s.start(t);
+  const o2=c.createOscillator(),g2=c.createGain();
+  o2.type="triangle"; o2.frequency.value=1568;
+  g2.gain.setValueAtTime(.0001,t+.02);
+  g2.gain.exponentialRampToValueAtTime(.10,t+.055);
+  g2.gain.exponentialRampToValueAtTime(.0001,t+.42);
+  o2.connect(g2).connect(c.destination); o2.start(t+.02); o2.stop(t+.45);
+}
+
+/* ================= 特效层：#fx ================= */
+/* 这一层上跑两样东西：
+   ① 珍珠珠群 —— 一套状态机，把"活动六幕"变成珍珠的六个动作（见 PEARL）
+   ② 金色礼花 —— 中奖时的金色雨                                                        */
+const fx=document.getElementById("fx"),ctx=fx.getContext("2d");
+let W=0,H=0,DPR=1;
+function resize(){
+  DPR=Math.min(2, window.devicePixelRatio||1);
+  W=innerWidth; H=innerHeight;
+  fx.width=Math.round(W*DPR); fx.height=Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);          // 之后所有绘制都用 CSS 像素坐标，高分屏不糊
+}
+resize();addEventListener("resize",resize);
+const REDUCE = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+/* ---------- 珍珠：质感统一的单颗绘制 ---------- */
+/* 真珍珠的三层：珠体（乳白渐变）＋ 边缘珠母虹彩（冷蓝紫）＋ 镜面高光。
+   画成纯白圆点会立刻变成"白纸屑"，所以这三层都不能省。 */
+/* 珍珠精灵：形状固定的东西不该每帧重算 —— 一次烘焙到离屏画布，
+   之后每颗珠只是一次 drawImage（实测把待机的每帧 54 个渐变降到 18 次贴图）。 */
+/* 珠子精灵曾按底色分两组烘（v51）。v54 起华丽版的页面底改回米白
+   （深蓝只用于展柜与丝带），两种皮肤面对的底色重新变成同一个，故合并为一组。
+   C(米白底色, 深蓝底色) 的双参数写法保留 —— 万一以后真要做"整页深底"皮肤，
+   把下面的 LX 改回 (key==="luxe") 即可，两套配色都还在。 */
+let SPRs={}, SPR_R=0;
+function pearlSprite(vi){
+  vi=(vi||0)%4;
+  const key=skin+vi;
+  if(SPRs[key]) return SPRs[key];
+  /* v65 一珠一款：同一模板烘 4 个变体（高光位置/弥散强度/虹彩浓度/副光点大小微差）。
+     全部珠共用一张图时，每颗珠的高光钉在同一像素上，人眼读出"复印感"。 */
+  const VA=[
+    {dx:-.30,dy:-.34,lu:1.00,ir:1.00,sp:1.00},
+    {dx:-.36,dy:-.27,lu:0.80,ir:0.72,sp:0.88},
+    {dx:-.24,dy:-.41,lu:0.88,ir:1.30,sp:1.15},
+    {dx:-.33,dy:-.38,lu:1.14,ir:0.88,sp:0.93}
+  ][vi];
+  const LX=false;                      // v54：页面底统一米白，合并为一组
+  const C=(a,b)=>LX?b:a;               // C(米白底色, 深蓝底色)
+  const S=128, c=document.createElement("canvas"); c.width=c.height=S;
+  const g=c.getContext("2d"), R=S*.30, cx=S/2, cy=S/2;
+  /* ① 接触阴影：偏右下、范围收紧。
+     目的是"球坐在纸面上"，而不是"发光体周围一圈灰晕" ——
+     旧版半径放到 R*1.34 且浓度只有 .42，在奶油底上正好读成水泡的半透明膜外圈。 */
+  const sg=g.createRadialGradient(cx+R*.17,cy+R*.25,R*.46,cx+R*.17,cy+R*.25,R*1.34);
+  sg.addColorStop(0,   C("rgba(122,92,66,.46)","rgba(4,8,34,.50)"));
+  sg.addColorStop(.42, C("rgba(122,92,66,.22)","rgba(4,8,34,.24)"));
+  sg.addColorStop(.72, C("rgba(122,92,66,.07)","rgba(4,8,34,.07)"));
+  sg.addColorStop(1,   C("rgba(122,92,66,0)","rgba(4,8,34,0)"));
+  g.beginPath();g.ellipse(cx+R*.17,cy+R*.25,R*1.30,R*1.10,0,0,6.2832);g.fillStyle=sg;g.fill();
+  /* ② 珠体：上亮下暗的立体球。
+     旧版径向渐变几乎均匀（最外 stop 才 .20 透明度），在深宝蓝底上够用，
+     一移到奶油米白底就变成"一块白盘" —— 明暗差不足就没有球感。现在把右下暗部给足。 */
+  const b=g.createRadialGradient(cx-R*.38,cy-R*.42,Math.max(.4,R*.05),cx+R*.06,cy+R*.08,R*1.06);
+  /* 暗部是"暖灰"不是"赭金"：(158,138,96) 的 R-B 已经 62，那是金色的色度，
+     在米白底上读成"一颗镀金塑料球"。珍珠吸收的环境色永远是灰的（参考图 R-B≈33）。 */
+  b.addColorStop(0,   C("rgba(255,255,255,1)","rgba(250,250,249,.99)"));
+  b.addColorStop(.26, C("rgba(255,254,252,.995)","rgba(240,241,244,.98)"));
+  b.addColorStop(.54, C("rgba(248,242,237,.975)","rgba(220,224,236,.955)"));
+  b.addColorStop(.78, C("rgba(233,223,217,.95)","rgba(186,194,220,.93)"));
+  b.addColorStop(.92, C("rgba(213,201,195,.86)","rgba(146,158,196,.86)"));
+  b.addColorStop(1,   C("rgba(190,176,170,.70)","rgba(100,114,160,.68)"));
+  g.beginPath();g.arc(cx,cy,R,0,6.2832);g.fillStyle=b;g.fill();
+  // ③ 右下冷色虹彩（珍珠与塑料球的区别）：深底上要加强，否则整颗珠读不出"冷"
+  const r2=g.createRadialGradient(cx+R*.30,cy+R*.34,Math.max(.4,R*.06),cx+R*.18,cy+R*.22,R*1.06);
+  r2.addColorStop(0,   C("rgba(174,186,238,"+(.16*VA.ir).toFixed(3)+")","rgba(130,162,255,"+(.34*VA.ir).toFixed(3)+")"));
+  r2.addColorStop(.60, C("rgba(190,196,232,"+(.07*VA.ir).toFixed(3)+")","rgba(158,176,250,"+(.12*VA.ir).toFixed(3)+")"));
+  r2.addColorStop(1,   C("rgba(190,196,232,0)","rgba(158,176,250,0)"));
+  g.beginPath();g.arc(cx,cy,R,0,6.2832);g.fillStyle=r2;g.fill();
+  // ④ 左上镜面高光（小而硬的高光点 —— 小珠"是珍珠、不是白点"的关键）：深底上收一档，免得过曝
+  /* ④a 弥散珠光：珍珠是次表面散射，高光本来就摊得开（参考图外晕铺到 0.45R）。
+     少了这一层，只靠一个点，小珠在米白底上就是一个"白点"。 */
+  const hx=cx+R*VA.dx, hy=cy+R*VA.dy;
+  const lu=g.createRadialGradient(hx,hy,0,hx,hy,Math.max(1,R*.62));
+  lu.addColorStop(0,  "rgba(255,255,255,"+(.38*VA.lu).toFixed(3)+")");
+  lu.addColorStop(.52,"rgba(255,255,255,"+(.15*VA.lu).toFixed(3)+")");
+  lu.addColorStop(1,  "rgba(255,255,255,0)");
+  g.beginPath();g.ellipse(hx,hy,Math.max(1,R*.60),Math.max(1,R*.45),-.48,0,6.2832);g.fillStyle=lu;g.fill();
+  /* ④b 镜面点：仍要收得住 —— 高光一散，珠子就没有"硬度"了 */
+  g.beginPath();g.ellipse(cx+R*VA.dx-R*.05,cy+R*VA.dy-R*.05,Math.max(.5,R*.165*VA.sp),Math.max(.4,R*.110*VA.sp),-.5,0,6.2832);
+  g.fillStyle=C("rgba(255,255,255,.97)","rgba(255,255,255,.90)");g.fill();
+  g.beginPath();g.ellipse(cx-R*.16,cy-R*.52,Math.max(.4,R*.062*VA.sp),Math.max(.3,R*.042*VA.sp),-.42,0,6.2832);
+  g.fillStyle=C("rgba(255,255,255,.64)","rgba(255,255,255,.56)");g.fill();
+  /* ⑤ 方向性轮廓（这一处决定"珍珠"还是"水泡"）：
+     旧版是全周等宽的「暖褐圈 + 白内圈」两层描边 —— 均匀膜边正是肥皂泡的画法，
+     在奶油米白底上读起来就是一颗水泡。现在改成有方向的轮廓：
+       · 全周一道很薄的收边（球体的暗部边界）
+       · 上缘一道亮白反光弧（受天光的一侧才亮）
+       · 下缘内侧一道环境反光（贴地反射舞台的光）
+     三者的亮度与角度都不对称 → 读成"受光的球"，而不是"一圈膜"。
+     v51：收边在深底上换成暗金（暖褐配深蓝会发脏），下缘反光换成冷蓝（米白底映暖光、深蓝底映冷光）。 */
+  g.beginPath();g.arc(cx,cy,Math.max(.3,R-R*.045),0,6.2832);
+  g.strokeStyle=C("rgba(152,136,124,.50)","rgba(98,80,40,.70)");g.lineWidth=Math.max(.5,R*.056);g.stroke();
+  g.beginPath();g.arc(cx,cy,Math.max(.3,R-R*.105),Math.PI*1.08,Math.PI*1.92);
+  g.strokeStyle=C("rgba(255,255,255,.82)","rgba(255,255,255,.74)");g.lineWidth=Math.max(.5,R*.072);g.stroke();
+  g.beginPath();g.arc(cx,cy,Math.max(.3,R-R*.125),Math.PI*.14,Math.PI*.86);
+  g.strokeStyle=C("rgba(255,246,222,.55)","rgba(168,192,255,.50)");g.lineWidth=Math.max(.4,R*.058);g.stroke();
+  SPRs[key]=c; SPR_R=R; return c;
+}
+/* 只在需要光晕时（汇聚/高速/收束）才画径向光；待机不画 */
+function pearlGlow(x,y,r,a,k){
+  if(k<=0) return;
+  const rr=r*2.5;
+  const g=ctx.createRadialGradient(x,y,r*.86,x,y,rr);
+  g.addColorStop(0,"rgba(255,248,226,"+(a*.30*k)+")");
+  g.addColorStop(.44,"rgba(255,240,200,"+(a*.12*k)+")");
+  g.addColorStop(1,"rgba(255,240,200,0)");
+  ctx.beginPath();ctx.arc(x,y,rr,0,6.2832);ctx.fillStyle=g;ctx.fill();
+}
+function pearl(x,y,r,a,k,vi){
+  const sp=pearlSprite(vi), s=r/SPR_R, w=sp.width*s;
+  pearlGlow(x,y,r,a,k||0);
+  ctx.globalAlpha=Math.max(0,Math.min(1,a));
+  ctx.drawImage(sp,x-w/2,y-w/2,w,w);
+  ctx.globalAlpha=1;
+}
+/* 珍珠完整形态（未裁切）：中奖绽放的大珠用，脊线 + 直径过曝 */
+/* 大珠精灵：绽放时直径约 400px、每帧要填 6 层大半径渐变（≈80 万像素），
+   在软件渲染/老机器上只有 15fps。形状是固定的，所以同样一次烘焙、之后只贴图。 */
+let BIGs={}, BIG_R=0;
+function bigSprite(){
+  const key=skin;
+  if(BIGs[key]) return BIGs[key];
+  const LX=false;                      // v54：页面底统一米白，合并为一组
+  const C=(a,b)=>LX?b:a;               // C(米白底色, 深蓝底色)
+  const S=640, R=200, c=document.createElement("canvas"); c.width=c.height=S;
+  const g=c.getContext("2d"), x=S/2, y=S/2, a=1;
+  // 外层柔光（一直到画布边缘 S/2=320=1.6R，正好装下）
+  const og=g.createRadialGradient(x,y,R*.92,x,y,S/2);
+  og.addColorStop(0,C("rgba(255,248,226,.34)","rgba(255,246,216,.24)"));
+  og.addColorStop(.42,C("rgba(255,240,200,.14)","rgba(250,236,190,.10)"));
+  og.addColorStop(1,"rgba(255,240,200,0)");
+  g.beginPath();g.arc(x,y,S/2,0,6.2832);g.fillStyle=og;g.fill();
+  // 落地阴影
+  const sg=g.createRadialGradient(x+R*.05,y+R*.10,R*.82,x+R*.05,y+R*.10,R*1.13);
+  sg.addColorStop(0,C("rgba(122,92,66,.30)","rgba(2,6,30,.34)"));
+  sg.addColorStop(.68,C("rgba(122,92,66,.12)","rgba(2,6,30,.13)"));
+  sg.addColorStop(1,C("rgba(122,92,66,0)"));
+  g.beginPath();g.arc(x+R*.05,y+R*.10,R*1.13,0,6.2832);g.fillStyle=sg;g.fill();
+  // 珠体
+  /* 珠体：比旧版"平"一些。旧版中心极亮、边缘极暗，那是"点光源打一个球"的模型，
+     看起来就是充气球。珍珠的体色其实是均匀的奶白，立体感几乎全靠那几点反光。 */
+  const b=g.createRadialGradient(x-R*.30,y-R*.34,R*.03,x-R*.04,y-R*.02,R*1.04);
+  b.addColorStop(0,C("rgba(255,255,255,1)","rgba(250,250,249,.99)"));
+  b.addColorStop(.24,C("rgba(255,254,252,.99)","rgba(240,241,244,.98)"));
+  b.addColorStop(.54,C("rgba(248,242,237,.965)","rgba(220,224,236,.955)"));
+  b.addColorStop(.79,C("rgba(233,223,217,.925)","rgba(186,194,220,.93)"));
+  b.addColorStop(.93,C("rgba(214,202,196,.845)","rgba(146,158,196,.86)"));
+  b.addColorStop(1,C("rgba(190,176,170,.72)","rgba(100,114,160,.68)"));
+  g.beginPath();g.arc(x,y,R,0,6.2832);g.fillStyle=b;g.fill();
+  // 珠母外圈（大珠"有边"的关键）
+  const rg=g.createRadialGradient(x,y,R*.74,x,y,R);
+  rg.addColorStop(0,"rgba(255,250,236,0)");
+  rg.addColorStop(.52,C("rgba(255,251,242,.24)","rgba(226,236,255,.24)"));
+  rg.addColorStop(.86,C("rgba(238,230,224,.56)","rgba(176,192,236,.56)"));
+  rg.addColorStop(1,C("rgba(196,184,178,.68)","rgba(122,142,202,.70)"));
+  g.beginPath();g.arc(x,y,R,0,6.2832);g.fillStyle=rg;g.fill();
+  // 冷色虹彩
+  const ir=g.createRadialGradient(x+R*.36,y+R*.40,R*.04,x+R*.22,y+R*.26,R*.96);
+  ir.addColorStop(0,C("rgba(158,176,244,.17)","rgba(136,170,255,.38)"));
+  ir.addColorStop(.50,"rgba(186,192,236,.055)");
+  ir.addColorStop(1,"rgba(186,192,236,0)");
+  g.beginPath();g.arc(x,y,R,0,6.2832);g.fillStyle=ir;g.fill();
+  /* 珠光弥散层：大珠直径可到 350px，只靠那枚小镜面点会读成"充气球"。
+     参考图的珍珠上半部是一大片柔亮（次表面散射），这一层补的就是它。 */
+  const lu=g.createRadialGradient(x-R*.30,y-R*.34,0,x-R*.30,y-R*.34,R*.74);
+  lu.addColorStop(0,  "rgba(255,255,255,.30)");
+  lu.addColorStop(.50,"rgba(255,255,255,.12)");
+  lu.addColorStop(1,  "rgba(255,255,255,0)");
+  g.beginPath();g.ellipse(x-R*.30,y-R*.34,R*.72,R*.55,-.48,0,6.2832);g.fillStyle=lu;g.fill();
+  // 转折面内阴影
+  const ig=g.createRadialGradient(x+R*.30,y+R*.34,R*.20,x,y,R*1.02);
+  ig.addColorStop(0,"rgba(120,104,70,0)");
+  ig.addColorStop(.74,"rgba(120,104,70,0)");
+  ig.addColorStop(1,C("rgba(134,120,114,.26)","rgba(60,76,132,.34)"));
+  g.beginPath();g.arc(x,y,R,0,6.2832);g.fillStyle=ig;g.fill();
+  /* 镜面高光 —— 珍珠与"气球"的分水岭。旧版是一大团 R*.26×R*.16 的柔和渐变，
+     远看就是橡胶表面的一片泛白。改成小面积、硬边的一块 + 紧挨着的一枚小副光点
+     （真珍珠表面总是两个高光点），表面立刻有硬度。 */
+  const hg=g.createRadialGradient(x-R*.34,y-R*.38,0,x-R*.34,y-R*.38,R*.14);
+  hg.addColorStop(0,"rgba(255,255,255,1)");
+  hg.addColorStop(.42,"rgba(255,255,255,.86)");
+  hg.addColorStop(.78,"rgba(255,255,255,.24)");
+  hg.addColorStop(1,"rgba(255,255,255,0)");
+  g.beginPath();g.ellipse(x-R*.34,y-R*.38,R*.128,R*.082,-.52,0,6.2832);g.fillStyle=hg;g.fill();
+  const hg2=g.createRadialGradient(x-R*.17,y-R*.50,0,x-R*.17,y-R*.50,R*.06);
+  hg2.addColorStop(0,"rgba(255,255,255,.92)");
+  hg2.addColorStop(1,"rgba(255,255,255,0)");
+  g.beginPath();g.ellipse(x-R*.17,y-R*.50,R*.052,R*.034,-.42,0,6.2832);g.fillStyle=hg2;g.fill();
+  // 底部托光
+  const bg=g.createRadialGradient(x+R*.14,y+R*.50,0,x+R*.14,y+R*.50,R*.30);
+  bg.addColorStop(0,C("rgba(255,247,226,.34)","rgba(176,196,255,.30)"));
+  bg.addColorStop(1,"rgba(255,247,226,0)");
+  g.beginPath();g.ellipse(x+R*.14,y+R*.50,R*.30,R*.13,.26,0,6.2832);g.fillStyle=bg;g.fill();
+  // 外缘收边
+  g.beginPath();g.arc(x,y,R*.988,0,6.2832);
+  g.strokeStyle=C("rgba(255,252,240,.40)","rgba(228,238,255,.34)");g.lineWidth=Math.max(1,R*.010);g.stroke();
+  // 内圈硬边反光：珍珠"有壳"的关键，一圈细而亮的同心反光
+  g.beginPath();g.arc(x,y,R*.935,0,6.2832);
+  g.strokeStyle=C("rgba(255,255,252,.30)","rgba(236,244,255,.26)");g.lineWidth=Math.max(1,R*.014);g.stroke();
+  // 接触阴影环：大珠压在奶油色结果卡上时靠这一圈才"贴得住"，否则像一颗浮着的球
+  const csr=g.createRadialGradient(x,y,R*.955,x,y,R*1.10);
+  csr.addColorStop(0,"rgba(122,92,66,0)");
+  csr.addColorStop(.34,"rgba(122,92,66,.17)");
+  csr.addColorStop(1,"rgba(122,92,66,0)");
+  g.beginPath();g.arc(x,y,R*1.10,0,6.2832);g.fillStyle=csr;g.fill();
+  BIGs[key]=c; BIG_R=R; return c;
+}
+function bigPearl(x,y,r,a){
+  const sp=bigSprite(), s=r/BIG_R, w=sp.width*s;
+  ctx.globalAlpha=Math.max(0,Math.min(1,a));
+  ctx.drawImage(sp,x-w/2,y-w/2,w,w);
+  ctx.globalAlpha=1;
+}
+
+/* ---------- 绽放柔光精灵：四向光锥 + 对角短芒 + 横向拉丝（刻意无圆环） ---------- */
+/* 形状固定 → 同样一次烘焙到离屏画布，运行期只 drawImage（不引入新的每帧渐变）。
+   光锥用「中心宽、端点收成尖、沿长度渐隐」的三角 fill，三层叠加柔化：
+   这是经典镜头光晕的画法，与"等分等长放射线"（=病毒剖面图）在观感上完全不同。 */
+let FLARE=null, FLARE_R=0;
+function flareSprite(){
+  if(FLARE) return FLARE;
+  const S=640, c=document.createElement("canvas"); c.width=c.height=S;
+  const g=c.getContext("2d"), x=S/2, y=S/2, RB=120;   // 画布半宽 320 > 最长光锥 2.55*120=306
+  /* 这里刻意【不画同心圆环】。原来有一圈 1.02R 的柔光环，配上球体之后，
+     整组读起来就是"一个圆 + 一圈轮廓"＝肥皂泡 —— 这正是"像吹出的泡泡糖"的根因之一。
+     环已删除，只保留放射状光锥：光是"散"出去的，就没人会把它读成球的轮廓。 */
+  // 四向细长光锥（长短交错）+ 四向对角短芒，三层叠加出柔光
+  const rays=[[0,2.55],[Math.PI/2,1.62],[Math.PI,2.55],[-Math.PI/2,1.62],
+              [Math.PI/4,.60],[Math.PI*3/4,.60],[Math.PI*5/4,.60],[Math.PI*7/4,.60]];
+  for(const wa of [[.070,.70],[.118,.26],[.180,.10]]){
+    for(const ry of rays){
+      const ex=Math.cos(ry[0]), ey=Math.sin(ry[0]), nx=-ey, ny=ex;
+      const L=RB*ry[1], Wd=RB*wa[0];
+      const grd=g.createLinearGradient(x,y,x+ex*L,y+ey*L);
+      grd.addColorStop(0,"rgba(255,253,246,"+wa[1]+")");
+      grd.addColorStop(.32,"rgba(255,247,222,"+(wa[1]*.52)+")");
+      grd.addColorStop(1,"rgba(255,247,222,0)");
+      g.beginPath();
+      g.moveTo(x+nx*Wd,y+ny*Wd);
+      g.lineTo(x+ex*L,y+ey*L);
+      g.lineTo(x-nx*Wd,y-ny*Wd);
+      g.closePath();g.fillStyle=grd;g.fill();
+    }
+  }
+  // ③ 横向镜头拉丝：一条极细极长的水平光带，是"真实镜头光晕"的标志性元素
+  const LS=RB*2.62, th=RB*.014;
+  const sgr=g.createLinearGradient(x-LS,y,x+LS,y);
+  sgr.addColorStop(0,"rgba(255,250,235,0)");
+  sgr.addColorStop(.30,"rgba(255,250,235,.26)");
+  sgr.addColorStop(.50,"rgba(255,253,246,.44)");
+  sgr.addColorStop(.70,"rgba(255,250,235,.26)");
+  sgr.addColorStop(1,"rgba(255,250,235,0)");
+  g.fillStyle=sgr; g.fillRect(x-LS,y-th/2,LS*2,th);
+  FLARE=c; FLARE_R=RB; return c;
+}
+function flare(x,y,r,a,rot){
+  const sp=flareSprite(), s=r/FLARE_R, w=sp.width*s;
+  ctx.save();ctx.translate(x,y);if(rot)ctx.rotate(rot);
+  ctx.globalAlpha=Math.max(0,Math.min(1,a));
+  ctx.drawImage(sp,-w/2,-w/2,w,w);
+  ctx.restore();ctx.globalAlpha=1;
+}
+
+/* ---------- 珠群状态机 ---------- */
+const IDLE="idle", GATHER="gather", ORBIT="orbit", IMPLODE="implode", BLOOM="bloom";
+const D_GATHER=430, D_IMPLODE=520;   // v46 340→520：汇聚拉长，让“一颗颗撞进去”看得清
+const PEARL={
+  mode:"", t0:0, list:[], cx:0, cy:0, target:null,
+  bloom:null, flash:0, seeded:false, fade0:0
+};
+function stageBox(){ return stageEl.getBoundingClientRect(); }
+function rnd(a,b){ return a+Math.random()*(b-a); }
+function easeOutCubic(t){ return 1-Math.pow(1-t,3); }
+function easeInQuart(t){ return t*t*t*t; }
+
+function seedPearls(){
+  const r=stageBox(); if(r.width<40) return;
+  /* 撒点策略：待机时珠群「定桩」在视口四角（上一版散布在奖品周围太乱）。
+     四角各一簇 = 1 颗主珠 + 1~2 颗辅珠；开始抽奖时四簇同时飞向展柜中心汇聚。
+     仍然遵守「不许读成孢子」的三条：少（12 颗以内）、分层（主 11~15 / 辅 6.5~9）、
+     成簇（围绕 4 个角心而不是均匀撒满）。 */
+  const VW=innerWidth, VH=innerHeight;
+  const nAux=Math.max(4, Math.min(8, Math.round(VW/210)));   // 辅珠总数：1920→8 颗、1366→7 颗
+  PEARL.list=[];
+  /* 禁区清单：标题、品牌 logo、女神人像、奖品格。
+     锚点落进禁区就沿该角的对角线方向再往外让，最多让 7 次 —— 换分辨率也不用重调。 */
+  const boxes=[];
+  const addBox=(sel,pad)=>{ const e=document.querySelector(sel); if(!e) return;
+    const b=e.getBoundingClientRect(); if(b.width<2||b.height<2) return;
+    boxes.push({l:b.left-pad,t:b.top-pad,r:b.right+pad,b:b.bottom+pad}); };
+  addBox("h1.serif",26); addBox(".brand-logo",26); addBox("#mascot",26);
+  /* 展柜本身也是禁区：奖区一放大就吃掉了视口四角，珠子会跟着被挤进柜内、
+     贴在卡边或压在深蓝柜面上。把柜体（含 hint）也列为禁区，珠子就回到柜外空白带。 */
+  addBox("#stage",30); addBox(".hint",18);
+  const put=(x0,y0,ax,ay,rad,base,hero)=>{
+    PEARL.list.push({
+      x:x0, y:y0, x0:x0, y0:y0, ix:x0, iy:y0, px:x0, py:y0, r0:rad, r:rad, base:base, hero:hero,
+      fin:rnd(0,260), fade:0,     // 淡入错开量 / 当前可见度（进待机时由 PEARL.fade0 驱动）
+      ax:ax, ay:ay,
+      /* 四条互不成整数倍的周期 → 轨迹是利萨如曲线、不闭合，读成"缓慢漂浮"而非"绕圈" */
+      T1:rnd(13,27), T2:rnd(9,17), T3:rnd(15,31), T4:rnd(11,19),
+      ph:rnd(0,6.2832), sp:rnd(.55,1.5), dirx:Math.random()<.5?-1:1, diry:Math.random()<.5?-1:1,
+      ring:rnd(0,6.2832), rr:rnd(.16,.34), orb:rnd(.34,.72),
+      lane:rnd(0,1), runner:(!hero && Math.random()<.22),
+      vi:(Math.random()*4)|0, z:Math.random()
+    });
+  };
+  /* 四角定桩锚点（视口比例）+ 各自的「让位方向」（背离视口中心那一侧） */
+  const CORNERS=[
+    {x:.125,y:.155,dx: 1,dy: 1},   // 左上
+    {x:.858,y:.190,dx:-1,dy: 1},   // 右上（logo 在更右上，故 y 略低）
+    {x:.250,y:.850,dx: 1,dy:-1},   // 左下（人像占左，故 x 右移）
+    {x:.870,y:.850,dx:-1,dy:-1}    // 右下
+  ];
+  const pushOut=(x,y,rad,dx,dy)=>{
+    for(let k=0;k<9;k++){
+      let hit=null;
+      for(const b of boxes){ if(x>b.l-rad&&x<b.r+rad&&y>b.t-rad&&y<b.b+rad){ hit=b; break; } }
+      if(!hit) break;
+      /* 沿「离自己最近的那条边界」逃出去。
+         原来是一律按固定方向推（朝视口中心），那是"禁区都在画面边缘"时代的写法 ——
+         如今展柜撑满、禁区变成画面正中一大块，朝中心推等于把珠子推进柜子里。
+         改为每次走最近的出口：落点自然停在柜外的空白带上。 */
+      const dL=x-(hit.l-rad), dR=(hit.r+rad)-x, dT=y-(hit.t-rad), dB=(hit.b+rad)-y;
+      const m=Math.min(dL,dR,dT,dB);
+      if(m===dL) x-=dL+6;
+      else if(m===dR) x+=dR+6;
+      else if(m===dT) y-=dT+6;
+      else y+=dB+6;
+      x=Math.max(rad+10,Math.min(VW-rad-10,x)); y=Math.max(rad+10,Math.min(VH-rad-10,y));
+    }
+    return [x,y];
+  };
+  const anchors=CORNERS.map(c=>{ const q=pushOut(VW*c.x,VH*c.y,16,c.dx,c.dy); return {x:q[0],y:q[1],dx:c.dx,dy:c.dy}; });
+  /* 每角：主珠一颗（大、稳，充当角上的「桩」），辅珠绕角心 24~52px 成簇。
+     幅度仍按「横向给足、纵向压小」，否则角上会发死（上一轮踩过：3 秒只走 6px）。 */
+  const per=[0,0,0,0];
+  for(let i=0;i<4;i++) per[i]=Math.floor(nAux/4);
+  for(let i=0;i<nAux%4;i++) per[i]++;
+  for(let i=0;i<4;i++){
+    const a=anchors[i];
+    const mm=pushOut(a.x+rnd(-9,9), a.y+rnd(-7,7), 8, a.dx, a.dy);
+    put(mm[0], mm[1], rnd(9,13), rnd(3,5), rnd(11,15), rnd(.84,.94), true);
+    for(let j=0;j<per[i];j++){
+      const ang=rnd(0,6.2832), dist=rnd(24,52);
+      const q=pushOut(a.x+Math.cos(ang)*dist, a.y+Math.sin(ang)*dist*.72, 8, a.dx, a.dy);
+      put(q[0], q[1], rnd(13,19), rnd(5,8), rnd(6.5,9), rnd(.70,.84), false);
+    }
+  }
+  PEARL.seeded=true;
+}
+function pearlSetMode(m,opt){
+  opt=opt||{};
+  const now=performance.now();
+  PEARL.mode=m; PEARL.t0=now;
+  const r=stageBox(); PEARL.cx=r.left+r.width/2; PEARL.cy=r.top+r.height/2;
+  if(opt.target) PEARL.target=opt.target;
+  if(m===GATHER||m===ORBIT||m===IMPLODE){
+    // 记录起点，让每个动作都从"此刻真实位置"接上，绝不跳帧
+    PEARL.list.forEach(p=>{ p.px=p.x; p.py=p.y; p.from={x:p.x,y:p.y}; p.delay=rnd(0,150); });
+  }
+  if(m===IDLE){
+    /* 淡入只在「重撒新珠」时启动（首次加载 / 从结果返回 / 尺寸变化）：
+       此时珠子是新的、位置就在四角，所以直接渐显即可，不再需要「从上一处位置缓入」。
+       从管理面板回到待机时位置没变，若也淡入一遍会看到珠子莫名闪一下，故不启动。 */
+    if(opt.fade){
+      PEARL.fade0=now;
+      PEARL.list.forEach(p=>{ p.fin=rnd(0,260); p.fade=0; });
+    }
+    PEARL.list.forEach(p=>{ p.delay=0; p.ix=p.x; p.iy=p.y; });
+  }
+}
+/* 六幕对外接口 */
+/* 回待机。reseed=true（首次加载 / 从结果返回 / 展柜尺寸变化）→ 重撒一批新珠并整体淡入，
+   目的是消掉「抽完回初始界面时，珠子从中奖卡片位置飘回四角」的归位感。 */
+function pIdle(opts){
+  opts=opts||{};
+  if(!PEARL.seeded || opts.reseed) seedPearls();
+  pearlSetMode(IDLE,{fade:!!opts.reseed});
+}
+function pGather(){ pearlSetMode(GATHER); }
+function pOrbit(){ pearlSetMode(ORBIT); }
+function pImplode(el){
+  const t=el?el.getBoundingClientRect():null;
+  pearlSetMode(IMPLODE,{target:t?{x:t.left+t.width/2,y:t.top+t.height/2}:null});
+}
+/* 落地：珠群抵达的那一帧，方格写精确半径并挂 .win —— 形状从「方形落点」变成「圆形奖章」，
+   这是“珠子撞进去了”这件事的视觉回执。
+   · 半径用 offsetWidth/2（不是 CSS 的 999px）：过大的数值会在过渡的前几帧就被 clamp 成圆，
+     观感仍是跳变；写精确值才看得到 22.58px → 半宽px 的连续插值。
+   · 格子在 .land 阶段没有任何 transform（见 .box.land 注释），所以此刻 offsetWidth 与
+     位置都还是方格的原值，pImplode 取的格心与随后的圆卡中心严格重合。 */
+function landWin(b){
+  if(!b) return;
+  b.style.borderRadius=(b.offsetWidth/2)+"px";
+  b.classList.remove("land");
+  b.classList.add("win");
+}
+/* 圆卡半径 / 珠体半径 两个几何常数（与 .box.win 的 1.128、JS 里的 0.775 同源） */
+const RING_K=1.128;        // 方格 → 等面积正圆的放大系数 √(4/π)
+const PEARL_IN_RING=.775;  // 珠体半径 ÷ 圆卡半径
+function pBloom(big){
+  const t=PEARL.target||{x:innerWidth/2,y:innerHeight/2};
+  const k=(big===false?.66:1);
+  /* 珠体半径从「中奖圆卡」反推，而不是继续跟 min(W,H) 绑定。
+     原来 R0=min(W,H)*.165 与卡宽各按各的比例长，所以圆珠和方卡的关系随视口漂移，
+     才会出现「四边被盖、四角外露」这种既不内切也不外接的中间态。
+     改由卡宽推导后，珠在任何视口都稳定落在圆卡内的 77.5% 处，同心关系成立。
+     注意用 offsetWidth（布局尺寸）而非 getBoundingClientRect：后者含 winPop 的
+     scale(1.128)，会把放大系数算两遍。 */
+  const wb=document.querySelector(".box.win");
+  const cw=wb?wb.offsetWidth:0;
+  PEARL.bloom={x:t.x,y:t.y,t0:performance.now(),k:k,
+               pr: cw>0 ? cw*RING_K*.5*PEARL_IN_RING*k : 0};
+  PEARL.mode=BLOOM; PEARL.flash=1;
+  /* 聚光：以绽放点为圆心压暗舞台（奶油底上珍珠和光芒都"没对比度"，压暗后才立得住） */
+  const bd=document.getElementById("bloomDim");
+  if(bd){
+    bd.style.setProperty("--bx",(t.x/innerWidth*100).toFixed(2)+"%");
+    bd.style.setProperty("--by",(t.y/innerHeight*100).toFixed(2)+"%");
+    bd.classList.add("show");
+  }
+}
+function pAfterBloom(){ /* 绽放后进入余辉，由 bloom 自身淡出 */ }
+
+/* ---------- 金色礼花（中奖时从顶部洒落，落在结果卡之上） ---------- */
+let parts=[];
+function burst(){
+  const colors=["#e9d29a","#c9a24b","#ffffff","#a87e2e","#dfe4ff"];
+  for(let i=0;i<130;i++){
+    parts.push({x:rnd(-40,W+40),y:rnd(-H*.28,-14),vx:rnd(-2.4,2.4),vy:rnd(2.6,7.4),
+      g:.11,s:rnd(3,9),c:colors[i%colors.length],r:rnd(0,6.28),vr:rnd(-.22,.22),life:rnd(120,220)});
+  }
+}
+
+/* ---------- 主循环 ---------- */
+let _amEl=null;
+function adminShown(){ if(!_amEl) _amEl=document.getElementById("adminMask"); return !!(_amEl&&_amEl.classList.contains("show")); }
+function clipStage(r){
+  const k=20;
+  ctx.beginPath();
+  ctx.moveTo(r.left+k,r.top);
+  ctx.arcTo(r.right,r.top,r.right,r.bottom,k);
+  ctx.arcTo(r.right,r.bottom,r.left,r.bottom,k);
+  ctx.arcTo(r.left,r.bottom,r.left,r.top,k);
+  ctx.arcTo(r.left,r.top,r.right,r.top,k);
+  ctx.closePath();ctx.clip();
+}
+function stepPearls(now){
+  const m=PEARL.mode;
+  const r=stageBox();
+  PEARL.cx=r.left+r.width/2; PEARL.cy=r.top+r.height/2;
+  /* 只有抽奖（轨道）裁切：待机珠定桩在视口四角、开始幕从四角飞向展柜中心、
+     绽放与收束要让珠冲出展柜 —— 这些都必须在展柜外可见。
+     ORBIT 保留裁切，好让冲刺珠从展柜边缘钻入钻出。 */
+  if(m===ORBIT) clipStage(r);
+  const list=PEARL.list;
+  const DRAWS=[];
+  for(const p of list){
+    p.px=p.x; p.py=p.y;
+    let a=p.base, glow=0, R=p.r0;
+    if(m===IDLE){
+      /* ① 待机：四角定桩（每角一簇），只做缓慢漂浮、不做位置漂移
+         旧版有两个致命观感问题：① 用 sin/abs(sin) 逐帧累加位移，方向感全无、速度偏快
+         （~18px/s 的持续漂移）；② 6% 的尺寸脉动周期约 1Hz，读成「微生物在动」。
+         现在：· 两条不成整数倍周期的正弦叠加 → 利萨如轨迹，不闭合、不绕圈
+               · 主珠幅度极小（±15px 内）当角上的「桩」，辅珠 ±22px 但周期 13~31s
+               · 尺寸呼吸 6% → 2.2~2.8%，周期拉长到 ~14s，不再「脉动」
+               · 位置由 x0/y0 推导，不做边界回绕 → 永远不会「蹦」回来；
+                 仅入场时用 ix/iy 做 0.9s 缓入，从收束点平顺滑回四角定桩位 */
+      const s=now*.001, TAU=6.2832;
+      const ox=Math.sin(s/p.T1*TAU+p.ph)*p.ax + Math.sin(s/p.T2*TAU+p.ph*1.7)*p.ax*.42;
+      const oy=Math.cos(s/p.T3*TAU+p.ph*.6)*p.ay + Math.cos(s/p.T4*TAU+p.ph*2.1)*p.ay*.38;
+      /* 位置直接落在利萨如轨迹上：重撒后的珠子本来就在四角定桩位，
+         不存在"从卡片位置归位"的位移。可见度 0→1 走 620ms（smoothstep），
+         同时珠体从 90% 轻微长出 → 读作「一颗颗凝结生成」，而不是凭空硬出现。 */
+      p.x=p.x0+ox; p.y=p.y0+oy;
+      let fd=Math.min(1,Math.max(0,(now-PEARL.fade0-p.fin)/620));
+      fd=fd*fd*(3-2*fd); p.fade=fd;
+      R=p.r0*(1+(p.hero?.022:.028)*Math.sin(s/14*TAU+p.ph))*(.90+.10*fd)*(.95+p.z*.10);
+    }
+    else if(m===GATHER){
+      // ② 开始：突然汇聚（起步慢、后段猛冲，收到展柜中心的小环上）
+      const t=Math.max(0,Math.min(1,(now-PEARL.t0-p.delay)/D_GATHER));
+      const e=Math.pow(t,2.3);
+      /* v65：落点角随进程旋转 .45rad —— 珠群是"卷"进环里的，不是直线怼到落点；
+         环半径按各珠深度微差，收拢时才有前后层次 */
+      const rr=(210+p.rr*230)*(1-e*.86)*(.94+p.z*.12);
+      const ang=p.ring+e*p.dirx*.45;
+      const tx=PEARL.cx+Math.cos(ang)*rr, ty=PEARL.cy+Math.sin(ang)*rr*.72;
+      p.x=p.from.x+(tx-p.from.x)*e; p.y=p.from.y+(ty-p.from.y)*e;
+      R=p.r0*(1+e*.22)*(.95+p.z*.10); a=p.base*(.6+e*.4); glow=e*.5;
+    }
+    else if(m===ORBIT){
+      // ③ 抽奖：沿轨迹高速运动（椭圆轨道，正反双向；一部分横向冲刺穿过展柜）
+      const t=(now-PEARL.t0)/1000+easeOutCubic(0);
+      if(p.runner){
+        const span=r.width+220, spd=560+p.sp*260;
+        const ph=(p.lane*span+t*spd)%span;
+        p.x=r.left-110+ph;
+        /* v65：冲刺线加正弦起伏 + 各珠深度差，不再是一组等高直线 */
+        p.y=r.top+26+((p.ring*37.7)%1)*(r.height-52)+Math.sin(t*2.6+p.ph)*7;
+        R=p.r0*(1.02+(p.z-.5)*.18); a=Math.min(1,p.base*1.32); glow=.40;
+      }else{
+        const ang=p.ring+t*(1.7+p.sp*1.5)*p.dirx;
+        const rx=r.width*(.10+p.rr*.30), ry=r.height*(.13+p.orb*.20);
+        /* v65：椭圆轨道加 z 轴 —— depth=sin(ang)，近处珠放大提亮、远处缩小压暗，
+           配合深度排序，珠群读成"一圈绕柜的立体珠链"，不再是贴屏的 2D 椭圆 */
+        const depth=Math.sin(ang);
+        p._z=.5+depth*.5;
+        p.x=PEARL.cx+Math.cos(ang)*rx;
+        p.y=PEARL.cy+depth*ry;
+        R=p.r0*(1.08+depth*.16);
+        a=Math.min(1,p.base*1.32)*(.86+depth*.14);
+        glow=.40*(.8+depth*.4);
+      }
+    }
+    else if(m===IMPLODE){
+      // ④ 停止：所有珍珠突然聚到中心（四次方加速 → 一瞬间收成一个点）
+      const t=Math.max(0,Math.min(1,(now-PEARL.t0-p.delay*.35)/D_IMPLODE));
+      const e=easeInQuart(t);
+      const tgt=PEARL.target||{x:PEARL.cx,y:PEARL.cy};
+      p.x=p.from.x+(tgt.x-p.from.x)*e; p.y=p.from.y+(tgt.y-p.from.y)*e;
+      R=p.r0*(1-e*.55)*(.95+p.z*.10); a=p.base*(1-e*.85); glow=e*.85;
+      if(e>=1) continue;
+    }
+    else if(m===BLOOM){ continue; }
+    else { continue; }
+    /* 淡入可见度对所有幕统一生效：若上一轮还没淡完就被切幕，也不会突然跳成实心 */
+    if(p.fade!==undefined && p.fade<1) a*=p.fade;
+    if(a<=.004) continue;                 // 还没浮现的珠子直接跳过（顺便省一次贴图）
+    /* v65：先收集、按深度排序后统一绘制（拖尾跟珠一起排）——
+       珠子交错时才有前后遮挡，这是"立体珠群"的最后一环 */
+    DRAWS.push({x:p.x,y:p.y,R,a,glow,v:p.vi||0,z:p._z!==undefined?p._z:p.z||0,
+                vx:p.x-p.px,vy:p.y-p.py});
+  }
+  DRAWS.sort((A,B)=>A.z-B.z);
+  for(const d of DRAWS){
+    const spd=Math.sqrt(d.vx*d.vx+d.vy*d.vy);
+    if(spd>3.4&&m!==IDLE){          // 拖尾（速度越快越长）——"高速运动"必须看得见
+      const tl=Math.min(148,spd*3.8), ang=Math.atan2(d.vy,d.vx);
+      const ex=d.x-Math.cos(ang)*tl, ey=d.y-Math.sin(ang)*tl;
+      const gd=ctx.createLinearGradient(d.x,d.y,ex,ey);
+      gd.addColorStop(0,"rgba(255,252,242,"+(d.a*.68)+")");
+      gd.addColorStop(1,"rgba(255,252,242,0)");
+      ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(ex,ey);
+      ctx.strokeStyle=gd;ctx.lineWidth=Math.max(.8,d.R*.95);ctx.lineCap="round";ctx.stroke();
+    }
+    pearl(d.x,d.y,d.R,d.a,d.glow,d.v);
+  }
+}
+/* 绽放：光核一闪 → 巨珠凝成 → 冲击波涟漪 + 柔光星芒 */
+function stepBloom(now){
+  const b=PEARL.bloom; if(!b) return;
+  // R0：旧值 .185 → 1080p 下直径 400px，压在 248px 高的展柜上就是个"球"；收到 .165
+  /* R0 = 光尺度（过曝 / 冲击波 / 光锥都用它，必须溢出圆卡外才像光）；
+     PR = 珠体尺度（收进圆卡内部）。两者刻意解耦：把 R0 一起调小会让
+     光也缩到金边以内，绽放会显得怯。 */
+  const t=(now-b.t0)/1000, R0=Math.min(W,H)*.165*(b.k||1);
+  const PR=b.pr>0?b.pr:R0*PEARL_IN_RING;
+  if(PEARL.flash>0) PEARL.flash=Math.max(0,PEARL.flash-.075);
+  if(PEARL.flash>0.06){                                // 起手那一下的全屏过曝（半径收小，省掉半个屏幕的渐变填充）
+    const fr=R0*1.45;
+    const fg=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,fr);
+    fg.addColorStop(0,"rgba(255,255,252,"+(PEARL.flash*.55)+")");
+    fg.addColorStop(.35,"rgba(255,247,222,"+(PEARL.flash*.20)+")");
+    fg.addColorStop(1,"rgba(255,247,222,0)");
+    // 只填光圈圆内：原来用 fillRect 铺满整屏（207 万像素，其中绝大多数是透明的），
+    // 软件渲染下这是绽放掉帧的主因（264K px vs 2.07M px）
+    ctx.beginPath();ctx.arc(b.x,b.y,fr,0,6.2832);ctx.fillStyle=fg;ctx.fill();
+  }
+  /* 生长曲线：这一处决定"珠体凝成"还是"吹泡泡糖"。
+     旧版 0.40s + easeOutCubic 且从 0 起长 —— 0.13s 就长到 67%，就是"啪地吹大"。
+     现在改成「光核一闪 → 珠体以 72% 尺寸凝出、只再涨到 100%」：
+     全程只放大 1.39 倍（旧版 2.17 倍且前段极快），所以不再有"吹气球"的观感；
+     "啪"那一下改由全屏过曝 + 冲击波 + 柔光星芒承担，而不是靠体积暴胀。
+     尺寸用近似线性（不用 easeOut）缓缓长满，透明度 0→1 走 0.34s 缓入 = 由虚到实。 */
+  const grow=Math.min(1,t/.58);
+  const ge=grow;
+  const settle=1+.025*Math.exp(-Math.pow((t-.58)/.15,2));
+  /* 由虚到实 0.32s —— 要早于星芒拉丝穿过珠心的时段。
+     若凝实太慢（试过 0.50s），半透明的珠体会被横向拉丝"冲淡"，
+     满屏亮线透过珠面 → 大珠看起来像一块发白的圆盘，反而更像泡泡。 */
+  const appear=Math.pow(Math.min(1,Math.max(0,(t-.04)/.32)),.85);
+  const R=PR*(.72+.28*ge)*settle*(1+.008*Math.sin(t*4.6));
+  // 光核：0~0.20s 先来一点极亮的光（"光先到、形体随后凝实"），这一瞬不画珠
+  if(t<.20){
+    const k=1-t/.20, cr=R0*(.20+.44*easeOutCubic(Math.min(1,t/.15)));
+    const cg=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,cr);
+    cg.addColorStop(0,"rgba(255,255,252,"+(.95*k)+")");
+    cg.addColorStop(.44,"rgba(255,250,232,"+(.38*k)+")");
+    cg.addColorStop(1,"rgba(255,247,222,0)");
+    ctx.beginPath();ctx.arc(b.x,b.y,cr,0,6.2832);ctx.fillStyle=cg;ctx.fill();
+  }
+  // 冲击波：两圈由内向外撕开
+  for(let i=0;i<2;i++){
+    const st=(t-i*.13)/.92;
+    if(st<=0||st>=1) continue;
+    const ringR=R0*(.30+st*1.34), fade=(1-st)*(1-st);
+    ctx.beginPath();ctx.arc(b.x,b.y,ringR,0,6.2832);
+    ctx.strokeStyle="rgba(255,249,232,"+(fade*.42)+")";
+    ctx.lineWidth=Math.max(1,R0*.030*(1-st));
+    ctx.stroke();
+  }
+  /* 柔光星芒：取代原来 12 道等分等长的放射直线
+     —— 那 12 根等长"刺"正是"像新冠病毒"的观感来源。
+     现在 = 四向细长光锥（2.55:1.62 长短交错，中心宽、端点收成尖、沿长度渐隐）
+            + 四向对角短芒（0.60，补斜向层次）
+            + 横向镜头拉丝（lens flare 的标志元素）
+            【刻意不画同心圆环】：圆环 + 球体 = 肥皂泡轮廓，正是"吹泡泡糖"的根因之一。
+     整体随珠体扩张并极慢旋转（0.02 rad/s，几乎看不出在转，但避免了呆板对称）。 */
+  const fA=Math.min(1,Math.max(0,t/.16))*Math.max(0,1-Math.max(0,(t-.36)/.46));
+  if(fA>0.004) flare(b.x,b.y,R0*(.80+.30*easeOutCubic(Math.min(1,t/.50))),fA,t*.020);   // 1.24R0→1.10R0：光锥更长、但每帧要合成的面积少 ~22%
+  // 大珠：0→1 长出，之后缩进圆卡、淡成余辉
+  // 0~0.52s 大珠独占舞台 → 0.52s 起化光（同时收缩，看着像「收进金环里」）
+  // → 0.86s 归零 → 0.90s 结果卡带着金色光晕浮出（退下来的光正好当光晕）
+  /* 收尾从 1.08s 提前到 0.86s，是为了让圆形在结果卡出现（0.90s）之前彻底消失。
+     原来 0.90~1.08s 有一段「圆珠余辉 + 结果卡」同框：结果卡居中、绽放点在中奖格
+     中心，两者不同心，于是画面里悬着一颗偏心的淡圆（#fx 层 z-index 112 高于结果层
+     100，圆还压在卡片上方），像随手画错的一个圆。 */
+  const fade=t<.52?1:Math.max(0,1-(t-.52)/.34);
+  // 化光时同步收缩：看着像"收进光晕"，而不是原地淡出一块圆
+  if(fade>0.01&&appear>0.01) bigPearl(b.x,b.y,Math.max(.5,R*(1-.45*(1-fade))),fade*appear);
+  if(fade<=0.01) PEARL.bloom=null;
+}
+
+(function loop(){
+  requestAnimationFrame(loop);
+  const now=performance.now();
+  ctx.clearRect(0,0,W,H);
+  if(!REDUCE){
+    if(adminShown()){
+      if(PEARL.mode!==IDLE&&PEARL.mode!==BLOOM) pIdle();
+    }
+    try{
+      if(PEARL.list.length&&!adminShown()){
+        /* 必须 save/restore：stepPearls 里的 clipStage() 若不还原，
+           裁剪区会一直留在 ctx 上，把冲出展柜的绽放大珠切掉 */
+        ctx.save();
+        if(PEARL.mode===BLOOM) stepBloom(now);
+        else if(state!=="result") stepPearls(now);   // 结果层盖住展柜时，珠群在其下不可见，不必空转
+        ctx.restore();
+      }
+    }catch(e){ if(!window.__pearlErr) window.__pearlErr=String((e&&e.stack)||e); PEARL.mode=IDLE; }
+  }
+  parts=parts.filter(p=>p.life-->0&&p.y<H+60);
+  for(const p of parts){
+    p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=p.vr;
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);
+    ctx.fillStyle=p.c;ctx.globalAlpha=Math.min(1,p.life/40);
+    ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);ctx.restore();
+  }
+})();
+
+/* ================= 珍珠女孩人像 ================= */
+const mascot=document.getElementById("mascot"),bubble=document.getElementById("bubble");
+const mascotImg=document.getElementById("mascotImg");
+/* 资源路径解析层：分文件版原样返回文件名；单文件版由构建脚本换成查表函数，
+   于是同一张图不管被引用几次，base64 只内联一份。 */
+const RES=p=>p;
+let cheerT=null, mascotSrc="pearl-girl.png";
+/* 换人像（而不是只换动作）：表情也交给图。src 相同就不动，避免无谓的重排与闪烁。 */
+function setMascotImg(srcPath){
+  if(mascotSrc===srcPath) return;
+  mascotSrc=srcPath;
+  mascotImg.src=RES(srcPath);
+}
+/* 档位 → 人像 / 动作 / 文案。rank：1..5 = 一等..五等，0 = 普惠礼（沿用四等奖的温柔档）。
+   幅度即层级：一跳一摇一点头，隔着半个展厅也能看出中的是几等奖。 */
+const MASCOT_MOOD={
+  1:{img:"pearl-girl-lv1.png", cls:"m1", ms:2600, text:"一等奖！中大奖啦 ✨"},
+  2:{img:"pearl-girl-lv2.png", cls:"m2", ms:2300, text:"二等奖，太棒了 ✨"},
+  3:{img:"pearl-girl-lv3.png", cls:"m3", ms:2100, text:"三等奖，好开心～"},
+  4:{img:"pearl-girl-lv4.png", cls:"m4", ms:2100, text:"四等奖，也是一份好运～"},
+  0:{img:"pearl-girl-lv4.png", cls:"m4", ms:2100, text:"收下小小心意～"}
+};
+function setBubble(t){bubble.textContent=t;}
+function setMascot(mode,rank){
+  mascot.classList.remove("cheer","watch","m1","m2","m3","m4");
+  clearTimeout(cheerT);
+  bubble.classList.remove("show");
+  if(mode==="watch"){mascot.classList.add("watch");setBubble("见证惊喜的时刻～");bubble.classList.add("show");}
+  else if(mode==="win"||mode==="gift"){
+    const m=MASCOT_MOOD[rank]||MASCOT_MOOD[4];
+    setMascotImg(m.img);
+    mascot.classList.add(m.cls);
+    setBubble(m.text); bubble.classList.add("show");
+    cheerT=setTimeout(()=>{mascot.classList.remove(m.cls);bubble.classList.remove("show");},m.ms);
+  }
+  else if(mode==="thanks"){setBubble("别灰心，好运在下次～");bubble.classList.add("show");cheerT=setTimeout(()=>bubble.classList.remove("show"),2200);}
+  else { setMascotImg("pearl-girl.png"); }   // idle：回基础人像（举手邀请的待机姿态）
+}
+
+/* 四张表情图提前解码：中奖那一刻换图若还在下载，会先把待机人像闪一下。 */
+["pearl-girl.png","pearl-girl-lv1.png","pearl-girl-lv2.png","pearl-girl-lv3.png","pearl-girl-lv4.png"].forEach(function(s){
+  var i=new Image(); i.src=RES(s);
+});
+/* 基础人像同样从 RES 取：单文件版因此把整张图只内联一份。 */
+mascotImg.src=RES(mascotSrc);
+
+/* ================= 按键 ================= */
+addEventListener("keydown",e=>{
+  if(e.repeat) return;
+  const adminOpen=document.getElementById("adminMask").classList.contains("show");
+  if(adminOpen){
+    if(e.key==="Escape") closeAdmin();
+    return;
+  }
+  if(e.key==="Enter"||e.key===" "){
+    e.preventDefault();
+    ac()&&AC.state==="suspended"&&AC.resume();
+    if(state==="idle") startDraw();
+    else if(state==="result" && overlay.classList.contains("show")) dismissResult();
+  }
+  if(e.key==="F2"){e.preventDefault();openAdmin();}
+});
+
+/* ================= 管理面板 ================= */
+const adminMask=document.getElementById("adminMask"),adminPanel=document.getElementById("adminPanel"),passPanel=document.getElementById("passPanel");
+let authed=false;
+function openAdmin(){
+  adminMask.classList.add("show");
+  if(authed){adminPanel.style.display="flex";passPanel.style.display="none";renderAdmin();}
+  else{adminPanel.style.display="none";passPanel.style.display="block";
+    const p=document.getElementById("passInput");p.value="";document.getElementById("passErr").textContent="";setTimeout(()=>p.focus(),50);}
+}
+function closeAdmin(){adminMask.classList.remove("show");}
+function tryPass(){
+  const v=document.getElementById("passInput").value;
+  if(v===adminPass){authed=true;openAdmin();}
+  else{document.getElementById("passErr").textContent="密码错误";document.getElementById("passInput").select();}
+}
+document.getElementById("passInput").addEventListener("keydown",e=>{if(e.key==="Enter")tryPass()});
+document.getElementById("gear").addEventListener("click",openAdmin);
+
+function renderAdmin(){
+  const tb=document.getElementById("plistBody");tb.innerHTML="";
+  const pool=eligible(),ws=pool.map(effWeight),total=ws.reduce((a,b)=>a+b,0);
+  prizes.forEach((p,i)=>{
+    const rate=(p.enabled&&p.stock!==0&&total>0)?((effWeight(p)/total*100).toFixed(1)+"%"):"—";
+    const tr=document.createElement("tr");
+    tr.innerHTML=
+      `<td><input type="checkbox" ${p.enabled?"checked":""} onchange="prizes[${i}].enabled=this.checked;renderAdmin()"></td>`+
+      `<td><input type="text" value="${escapeHtml(p.name)}" onchange="prizes[${i}].name=this.value;renderAdmin();buildGrid()"></td>`+
+      `<td><input type="text" class="tier" value="${escapeHtml(p.tier||"")}" placeholder="留空不显示" onchange="prizes[${i}].tier=this.value.trim();renderAdmin();buildGrid()"></td>`+
+      `<td class="icocell"><span class="ico-prev">${ICONS[iconKeyFor(p)]}</span>`+
+        `<select onchange="prizes[${i}].icon=this.value;renderAdmin();buildGrid()">`+
+        ICON_LABELS.map(([k,v])=>`<option value="${k}"${(p.icon||"")===k?" selected":""}>${v}</option>`).join("")+
+        `</select></td>`+
+      `<td><select onchange="prizes[${i}].kind=this.value;renderAdmin();buildGrid()">`+
+        `<option value="award"${p.kind!=="gift"?" selected":""}>正式奖</option>`+
+        `<option value="gift"${p.kind==="gift"?" selected":""}>安慰礼</option></select></td>`+
+      `<td><input type="number" min="0" value="${p.weight}" onchange="prizes[${i}].weight=Math.max(0,+this.value||0);renderAdmin()"></td>`+
+      `<td class="rate">${rate}</td>`+
+      `<td><input type="number" min="-1" value="${p.stock}" onchange="prizes[${i}].stock=+this.value;renderAdmin()"></td>`+
+      `<td>${stats[p.name]||0}</td>`+
+      `<td><button class="del" onclick="delPrize(${i})">删除</button></td>`;
+    tb.appendChild(tr);
+  });
+  const lb=document.getElementById("logBox");
+  lb.innerHTML = log.length? ("<b>最近抽奖记录（共 "+log.length+" 条，可导出 CSV）：</b><br>"+log.slice(0,50).map(l=>`${l.t} — ${l.tier?("【"+l.tier+"】"):""}${l.name}`).join("<br>")) : "<b>最近抽奖记录：</b>暂无";
+  document.getElementById("adminPass").value=adminPass;
+  const chk=document.getElementById("adaptChk"); if(chk) chk.checked=stockAdapt;
+  // 奖励池总览：一眼看清活动规模
+  const awards=prizes.filter(p=>p.kind!=="gift");
+  const totInit=awards.reduce((a,p)=>a+(p.init>0?p.init:0),0);
+  const totLeft=awards.reduce((a,p)=>a+(p.stock>0?p.stock:0),0);
+  const st=document.getElementById("poolStat");
+  if(st) st.innerHTML=`🎁 奖励池：<b>${awards.length}</b> 档 · 总配额 <b>${totInit}</b> 件 · 剩余 <b>${totLeft}</b> 件 · 已抽出 <b>${totInit-totLeft}</b> 件　|　概率按 ${stockAdapt?"<b>库存自适应</b>":"<b>固定权重</b>"} 计算`;
+}
+/* 按库存配额一键设定权重：各档消耗速度与配额成比例，抽满总配额时刚好同时抽完 */
+function balanceByStock(){
+  let n=0;
+  prizes.forEach(p=>{
+    if(p.kind==="gift") return;
+    const q=(p.init>0)?p.init:((p.stock>0)?p.stock:0);
+    if(q>0){ p.weight=q; n++; }
+  });
+  if(!n){ toast("没有可均衡的奖项"); return; }
+  saveStore(); renderAdmin(); buildGrid();
+  toast("已按库存配额均衡 "+n+" 个奖项的权重");
+}
+function toggleAdapt(el){
+  stockAdapt=el.checked; saveStore(); renderAdmin();
+  toast(stockAdapt?"已开启库存自适应（余量少自动降权）":"已改为固定权重");
+}
+function addPrize(){prizes.push({name:"新奖品",tier:"奖品",icon:"",weight:10,stock:10,init:10,enabled:true,kind:"award"});renderAdmin();buildGrid();}
+function delPrize(i){if(confirm("确定删除「"+prizes[i].name+"」？")){prizes.splice(i,1);renderAdmin();buildGrid();}}
+function saveAdmin(){
+  adminPass=document.getElementById("adminPass").value.trim()||"8888";
+  prizes.forEach(p=>{if(p.init===undefined)p.init=p.stock; if(!p.kind)p.kind="award"; if(p.icon===undefined)p.icon=""; if(p.tier===undefined)p.tier="";});
+  saveStore();buildGrid();
+  toast("✅ 已保存并生效");
+  renderAdmin();
+}
+function resetStock(){
+  if(!confirm("将所有奖品库存还原为初始设置？已抽出的记录不清空。"))return;
+  prizes.forEach(p=>{p.stock=p.init});
+  saveStore();buildGrid();renderAdmin();toast("库存已还原");
+}
+function factoryReset(){
+  if(!confirm("⚠️ 恢复出厂将清空全部奖品设置与抽奖记录，确定？"))return;
+  prizes=defaultPrizes();adminPass="8888";log=[];stats={};presetV=PRESET_V;stockAdapt=true;saveStore();buildGrid();renderAdmin();toast("已恢复出厂设置");
+}
+function download(fname,text,type){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([text],{type:type||"application/json"}));
+  a.download=fname;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+function today(){const d=new Date(),p=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());}
+function csvCell(v){v=String(v==null?"":v);return /[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+function exportCfg(){download("抽奖配置-"+today()+".json",JSON.stringify({prizes,adminPass,stockAdapt},null,2));toast("配置已导出");}
+function importCfg(input){
+  const f=input.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{try{
+    const d=JSON.parse(rd.result);
+    if(!Array.isArray(d.prizes))throw 0;
+    prizes=d.prizes;adminPass=d.adminPass||adminPass;
+    prizes.forEach(p=>{if(p.init===undefined)p.init=p.stock; if(!p.kind)p.kind="award"; if(p.icon===undefined)p.icon=""; if(p.tier===undefined)p.tier="";});
+    saveStore();buildGrid();renderAdmin();toast("✅ 配置已导入");
+  }catch(e){alert("配置文件格式不正确")}};
+  rd.readAsText(f);input.value="";
+}
+/* 中奖记录导出：序号 / 时间 / 奖项 / 奖品（最新在前） */
+function exportLogCsv(){
+  if(!log.length){toast("暂无抽奖记录");return;}
+  const rows=log.map((l,i)=>[log.length-i, l.t, l.tier||"普惠礼", l.name].map(csvCell).join(","));
+  download("中奖记录-"+today()+".csv",
+    "\uFEFF"+["序号,时间,奖项,奖品名称"].concat(rows).join("\r\n"),"text/csv");
+  toast("已导出 "+log.length+" 条中奖记录");
+}
+/* 奖品库存汇总导出：给活动复盘用（配额 / 剩余 / 已抽出 / 实际概率） */
+function exportStockCsv(){
+  const pool=eligible(), ws=pool.map(effWeight), tot=ws.reduce((a,b)=>a+b,0);
+  const rows=prizes.map(p=>{
+    const drawn=(p.init>0 && p.stock>=0) ? (p.init-p.stock) : (stats[p.name]||0);
+    const init=(p.init>0) ? p.init : (p.stock<0 ? "不限" : p.stock);
+    const rate=(p.enabled&&p.stock!==0&&tot>0) ? ((effWeight(p)/tot*100).toFixed(2)+"%") : "—";
+    return [p.tier||"（普惠礼）", p.name, p.kind==="gift"?"普惠礼":"正式奖",
+            init, p.stock<0?"不限":p.stock, drawn, rate].map(csvCell).join(",");
+  });
+  download("奖品库存汇总-"+today()+".csv",
+    "\uFEFF"+["奖项,奖品名称,类型,总配额,剩余库存,已抽出,当前概率"].concat(rows).join("\r\n"),"text/csv");
+  toast("已导出奖品库存汇总");
+}
+let toastTimer=null;
+function toast(msg){
+  const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2000);
+}
+/* ================= 皮肤切换 =================
+   两套皮肤走同一条代码路径：唯一开关是 body[data-skin]，抽奖逻辑、概率、库存一概不感知皮肤。
+   装饰素材是 <img data-art="..."> 且不写 src —— 浏览器不会为没有 src 的 img 发请求，
+   所以简约版下这 5 张图一次都不下载；只有切到华丽版时才补上 src。 */
+function applySkin(name){
+  skin = (name === "luxe") ? "luxe" : (name === "oil" ? "oil" : "simple");
+  document.body.dataset.skin = skin;
+  const luxe = (skin === "luxe");
+  const arts = document.querySelectorAll("[data-art]");
+  for(let i=0;i<arts.length;i++){
+    const im = arts[i];
+    if(luxe){
+      const want = RES(im.dataset.art);
+      if(im.getAttribute("src") !== want) im.setAttribute("src", want);
+    }else if(im.hasAttribute("src")){
+      im.removeAttribute("src");
+    }
+  }
+  // 字标也分两套：简约版是"金色 + 英文绶带"的老字标，华丽版是珍珠花环字标。
+  // 必须经 RES()：单文件版里由它查表拿到 data URI，两套字标合计只内联两份。
+  const wm = document.querySelector(".wordmark");
+  if(wm){
+    // 油画版用去拖尾+暖金化的专属字标（原图的白高光在深底上读成霉斑）
+    const want = RES(luxe ? "title-garland.png"
+              : (skin === "oil" ? "title-wordmark-oil.png" : "title-wordmark.png"));
+    if(wm.getAttribute("src") !== want) wm.setAttribute("src", want);
+  }
+  // 珠子精灵按底色烘过，换肤必须重烘，否则拿的是上一套底色调出来的珠
+  SPRs = {}; BIGs = {};
+  const sel = document.getElementById("skinSel");
+  if(sel) sel.value = skin;
+  resize();
+  if(state === "idle") buildGrid();
+}
+function pickSkin(v){
+  skinMig=1;   // 显式选择：落标记，防止下次加载被"旧默认迁移"改回去
+  applySkin(v); saveStore();
+  toast(v === "luxe" ? "已切换：华丽版（深蓝丝绒 + 金框）" : v === "oil" ? "已切换：油画版（古典暖调油画框）" : "已切换：简约版（米白）");
+}
+adminMask.addEventListener("click",e=>{if(e.target===adminMask)closeAdmin()});
+
+/* 窗口尺寸变化时重排（抽奖进行中不打断） */
+let rzT=null;
+addEventListener("resize",()=>{clearTimeout(rzT);rzT=setTimeout(()=>{if(state==="idle")buildGrid();},220);});
+
+applySkin(skin);   // 按本地配置恢复皮肤（默认华丽版，常量 DEFAULT_SKIN）
+buildGrid();
+setMascot("idle");
+</script>
+</body>
+</html>
